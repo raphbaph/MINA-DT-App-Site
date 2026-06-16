@@ -1,0 +1,70 @@
+---
+// Native SVG recreation of the deployment-cadence flow (replaces a raster export).
+// Phases as rounded boxes, transition criteria as diamonds, on-brand cool palette.
+interface Props {
+  caption?: string;
+  class?: string;
+}
+const { caption, class: cls = "my-7" } = Astro.props;
+const ink = "#2d2d2d";
+const fill = "#e3e6f6"; // lavender secondary
+const stroke = "#b7c0ee";
+---
+
+<figure class={cls}>
+  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
+    <svg
+      viewBox="0 0 800 500"
+      role="img"
+      aria-label="Deployment flow: Test Phase advances (2 proposals, 2 months, or treasury spent) to Scale Up Phase, then (4 proposals, 3 months, or treasury spent) to Final Deployment where signer authority is dropped and break-glass signers are sent to burn."
+      class="h-auto w-full"
+      font-family="IBM Plex Sans, system-ui, sans-serif"
+    >
+      <defs>
+        <marker id="fa" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill={ink}></path>
+        </marker>
+      </defs>
+
+      <!-- Boxes & diamonds -->
+      <rect x="24" y="24" width="150" height="160" rx="14" fill={fill} stroke={stroke}></rect>
+      <polygon points="380,24 500,104 380,184 260,104" fill={fill} stroke={stroke}></polygon>
+      <rect x="575" y="14" width="170" height="180" rx="14" fill={fill} stroke={stroke}></rect>
+      <polygon points="660,296 770,380 660,464 550,380" fill={fill} stroke={stroke}></polygon>
+      <rect x="310" y="305" width="150" height="150" rx="14" fill={fill} stroke={stroke}></rect>
+
+      <!-- Arrows -->
+      <line x1="176" y1="104" x2="256" y2="104" stroke={ink} stroke-width="2" marker-end="url(#fa)"></line>
+      <line x1="502" y1="104" x2="571" y2="104" stroke={ink} stroke-width="2" marker-end="url(#fa)"></line>
+      <line x1="660" y1="196" x2="660" y2="292" stroke={ink} stroke-width="2" marker-end="url(#fa)"></line>
+      <line x1="548" y1="380" x2="464" y2="380" stroke={ink} stroke-width="2" marker-end="url(#fa)"></line>
+      <line x1="308" y1="380" x2="182" y2="380" stroke={ink} stroke-width="2" marker-end="url(#fa)"></line>
+
+      <!-- Box / diamond text -->
+      <text text-anchor="middle" font-size="14" fill={ink}>
+        <tspan x="99" y="99">Test Phase</tspan><tspan x="99" y="118">Deployment</tspan>
+      </text>
+      <text text-anchor="middle" font-size="14" fill={ink}>
+        <tspan x="660" y="95">Scale Up Phase</tspan><tspan x="660" y="114">Deployment</tspan>
+      </text>
+      <text text-anchor="middle" font-size="14" fill={ink}>
+        <tspan x="385" y="375">Final</tspan><tspan x="385" y="394">Deployment</tspan>
+      </text>
+      <text text-anchor="middle" font-size="13" fill={ink}>
+        <tspan x="380" y="80">2 proposals</tspan><tspan x="380" y="98">OR 2 months</tspan><tspan x="380" y="116">pass OR</tspan><tspan x="380" y="134">Treasury spent</tspan>
+      </text>
+      <text text-anchor="middle" font-size="13" fill={ink}>
+        <tspan x="660" y="356">4 proposals</tspan><tspan x="660" y="374">OR 3 months</tspan><tspan x="660" y="392">pass OR</tspan><tspan x="660" y="410">Treasury spent</tspan>
+      </text>
+
+      <!-- Edge labels -->
+      <text text-anchor="middle" font-size="12" fill={ink}>
+        <tspan x="506" y="352">Signer Authority</tspan><tspan x="506" y="368">dropped</tspan>
+      </text>
+      <text text-anchor="middle" font-size="12" fill={ink}>
+        <tspan x="96" y="366">Break Glass</tspan><tspan x="96" y="382">signers sent</tspan><tspan x="96" y="398">to burn</tspan>
+      </text>
+    </svg>
+  </div>
+  {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
+</figure>

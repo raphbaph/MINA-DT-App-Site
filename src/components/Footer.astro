@@ -1,0 +1,29 @@
+---
+const year = new Date().getFullYear();
+const twitterUrl = "https://x.com/MinaFoundation";
+---
+
+<footer class="mt-24 bg-ink text-[rgb(205_217_225_/_0.85)]">
+  <div class="mx-auto max-w-[1180px] px-5 py-12">
+    <div class="flex flex-wrap items-start justify-between gap-8">
+      <div>
+        <p class="eyebrow !text-[rgb(183_205_216_/_0.7)]">MINA Foundation</p>
+        <p class="mt-1 font-display text-xl text-white">
+          Decentralized Treasury Updates
+        </p>
+        <p class="mt-3 max-w-[58ch] text-sm">
+          A community primer on the MINA Decentralized Treasury App. Data points reflect
+          the source reports and should be confirmed before acting on them.
+        </p>
+      </div>
+      <nav class="flex flex-col gap-2 text-sm" aria-label="Footer">
+        <a href="/#concept" class="text-[rgb(205_217_225_/_0.85)] no-underline hover:text-white">Primer</a>
+        <a href="/updates" class="text-[rgb(205_217_225_/_0.85)] no-underline hover:text-white">Updates</a>
+        <a href={twitterUrl} target="_blank" rel="noopener noreferrer" class="text-[rgb(205_217_225_/_0.85)] no-underline hover:text-white">X / Twitter</a>
+      </nav>
+    </div>
+    <p class="mt-10 text-xs text-[rgb(183_205_216_/_0.55)]">
+      &copy; {year} · Published for the MINA community.
+    </p>
+  </div>
+</footer>

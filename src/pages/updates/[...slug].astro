@@ -1,0 +1,51 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import TableWrap from "../../components/TableWrap.astro";
+
+// One page per entry in the `updates` collection. Drop a new .mdx file into
+// src/content/updates/ and it gets its own route automatically. The slug comes
+// from the frontmatter `slug` if set, otherwise the filename (entry.id).
+export async function getStaticPaths() {
+  const entries = await getCollection("updates", ({ data }) => !data.draft);
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug ?? entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const dateStr = entry.data.pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+---
+
+<BaseLayout
+  title={`${entry.data.title} · MINA DT App`}
+  description={entry.data.summary}
+>
+  <article class="mx-auto max-w-[960px] px-5 py-12 md:py-16">
+    <header class="mb-10">
+      <a
+        href="/updates"
+        class="font-mono text-sm text-ink-soft no-underline hover:text-accent"
+        >&larr; All updates</a
+      >
+      <p class="mt-4 font-mono text-sm text-ink-soft">
+        {dateStr}{entry.data.version ? ` · ${entry.data.version}` : ""}
+      </p>
+      <h1 class="mt-2 font-display text-4xl md:text-5xl">{entry.data.title}</h1>
+      <p class="mt-4 max-w-[68ch] text-lg text-ink-soft">
+        {entry.data.summary}
+      </p>
+    </header>
+
+    <div class="doc">
+      <Content components={{ table: TableWrap }} />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,284 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ThresholdCalculator from "../components/ThresholdCalculator.astro";
+import SCurveChart from "../components/SCurveChart.astro";
+import DeployFlowChart from "../components/DeployFlowChart.astro";
+import LifecycleChart from "../components/LifecycleChart.astro";
+import BalanceChart from "../components/BalanceChart.astro";
+
+const updates = (await getCollection("updates", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
+);
+const proposalHref = "/updates/proposal-v1";
+const fmt = (d: Date) =>
+  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+const dossier = [
+  { value: "~55M", note: "MINA total deployable across the three candidate phases" },
+  { value: "4", note: "epoch proposal lifecycle (~4 weeks) after pre-discussion" },
+  { value: "3 / 5", note: "signer break-glass threshold for an emergency veto" },
+];
+
+const failureModes = [
+  { t: "Bricked by caution", b: "Thresholds set too high and no proposal can ever pass — the treasury is frozen by its own rules." },
+  { t: "Open to capture", b: "Thresholds too low let a cheap voting majority pass self-serving proposals and drain the treasury." },
+  { t: "Out of sync", b: "The ZKApp falls out of sync with chain state and its proofs no longer reconcile, bricking the treasury." },
+];
+
+const lifecycle = [
+  { t: "Submission", b: "A formal proposal starts. The snapshot is taken at N-2; by day three, changes mean restarting with a new proposal." },
+  { t: "Exploration", b: "Contributors refine and align. Optional KYC/KYB checks and feedback before vote locks." },
+  { t: "Voting", b: "Stakeholders vote formally over one epoch. Adaptive participation and approval thresholds apply." },
+  { t: "Cooldown", b: "A final exit window. Requests above 5% of the treasury automatically double cooldown for scrutiny." },
+];
+
+const phases = [
+  { t: "Test Phase", amt: "1M MINA", b: "Low thresholds reachable by a single top validator, on purpose, to bootstrap activity. Break glass active; Foundation retains signer authority." },
+  { t: "Scale Up Phase", amt: "~20M MINA", b: "Participation ramps up so real validator turnout or top-100 accounts are needed. Real value for builders; break glass still active." },
+  { t: "Final Deployment", amt: "~34M MINA", b: "Up to 34M MINA available. Signer authority is relinquished; once a cadence of successes is reached, the break-glass keys are burned." },
+];
+
+const transitionRules = [
+  "Test → Scale Up: treasury spent, two consecutive proposals pass, or two months elapse.",
+  "Scale Up → Final: treasury spent, four consecutive proposals pass, or three months elapse.",
+  "Unused Test treasury is drained and redeployed into Scale Up when the phase ends.",
+];
+
+const criteria = [
+  { n: "01", t: "Funds at risk", b: "A clear, credible threat that DT funds will be stolen, frozen, or materially impaired before execution." },
+  { n: "02", t: "Capture", b: "Governance capture, vote manipulation, bribery, or unusually narrow outcomes that compromise the decision." },
+  { n: "03", t: "Attacker benefit", b: "One-sided value extraction to a narrow set of accounts with no plausible pro-protocol rationale." },
+  { n: "04", t: "Security incident", b: "Critical DT App vulnerabilities, active exploitation, or infrastructure attacks that make operation unsafe." },
+  { n: "05", t: "Irregular proposal", b: "Malformed payloads, description-payload mismatch, or broken process norms that would cause unintended effects." },
+];
+---
+
+<BaseLayout title="MINA Foundation · Decentralized Treasury Updates">
+  {/* ---------- Hero ---------- */}
+  <section class="mx-auto max-w-[1180px] px-5 pt-14 pb-10 md:pt-20">
+    <span class="chip">MINA Decentralized Treasury</span>
+    <h1 class="mt-4 max-w-[16ch] font-display text-4xl md:text-6xl">
+      A treasury the community can gradually take over.
+    </h1>
+    <p class="mt-5 max-w-[60ch] text-lg text-ink-soft">
+      The DT App is a MINA-native ZK app that lets the community submit, vote on, and
+      execute treasury proposals while the system ramps from a guarded test deployment to
+      full community stewardship. This is a primer on how it works.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a href="#calculator" class="pill pill-primary">Try the threshold calculator</a>
+      <a href={proposalHref} class="pill pill-secondary">Read the full proposal</a>
+    </div>
+
+    <dl class="mt-12 grid gap-4 sm:grid-cols-3">
+      {dossier.map((s) => (
+        <div class="glass p-7">
+          <dt class="font-body text-5xl font-semibold tracking-tight text-ink">{s.value}</dt>
+          <dd class="mt-3 max-w-[34ch] text-ink-soft">{s.note}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  {/* ---------- Concept ---------- */}
+  <section id="concept" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Concept</span>
+    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
+      Community control, without risking the whole treasury on day one.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      MINA doesn't natively support delegated voting like an EVM governor. The DT App solves
+      that with a MINA-native ZKApp for the proposal lifecycle, adaptive quorum, vote
+      tallying, and treasury disbursement. The candidate approach starts small, gathers real
+      participation data, and redeploys with larger treasury slices and stronger thresholds
+      as community activity proves itself.
+    </p>
+    <p class="mt-8 font-medium text-ink">Three failure modes shape every parameter:</p>
+    <div class="mt-4 grid gap-4 md:grid-cols-3">
+      {failureModes.map((m) => (
+        <div class="card-dark p-6">
+          <h3 class="font-display text-xl">{m.t}</h3>
+          <p class="mt-2 text-sm">{m.b}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ---------- Lifecycle ---------- */}
+  <section id="lifecycle" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Lifecycle</span>
+    <h2 class="mt-4 max-w-[18ch] font-display text-3xl md:text-5xl">
+      A four-week proposal lifecycle.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      The original report recommended variable lifecycle lengths. The DT App simplifies this:
+      submission, exploration, voting, and cooldown are each one MINA epoch — roughly one week
+      after the MESA update. These stages are fixed and can't change without redeploying.
+    </p>
+    <LifecycleChart caption="Four fixed stages, one epoch (~1 week) each." />
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {lifecycle.map((s, i) => (
+        <div class="rounded-2xl border border-line bg-paper/55 p-5 backdrop-blur-sm">
+          <span class="font-mono text-sm text-accent">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="mt-1 font-display text-lg">{s.t}</h3>
+          <p class="mt-2 text-sm text-ink-soft">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ---------- Thresholds + calculator ---------- */}
+  <section id="thresholds" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Thresholds</span>
+    <h2 class="mt-4 max-w-[18ch] font-display text-3xl md:text-5xl">
+      Adaptive thresholds on an S-curve.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      Participation scales with the size of the request. Thresholds rise from 20% to 50%
+      participation and 51% to 70% approval, then a per-phase modifier scales those to the
+      current deployment. Early phases keep the bar low enough for real proposals to pass;
+      later phases raise the cost of capture.
+    </p>
+    <SCurveChart caption="Required quorum rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
+  </section>
+  <ThresholdCalculator />
+
+  {/* ---------- Deployment ---------- */}
+  <section id="deployment" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Deployment</span>
+    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
+      Deployed in three guarded steps.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      Rather than expose the whole treasury at once, the DT App is deployed in rounds — moving
+      from guarded testing to final decentralization as the community proves itself.
+    </p>
+    <div class="mt-6 grid gap-4 md:grid-cols-3">
+      {phases.map((p, i) => (
+        <div class="rounded-2xl border border-line bg-paper/55 p-6 backdrop-blur-sm">
+          <span class="font-mono text-sm text-accent">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="mt-1 font-display text-xl">{p.t}</h3>
+          <p class="mt-1 font-mono text-sm text-ink-soft">{p.amt}</p>
+          <p class="mt-2 text-sm text-ink-soft">{p.b}</p>
+        </div>
+      ))}
+    </div>
+    <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <DeployFlowChart class="m-0" caption="Movement is triggered by treasury spend, proposal cadence, or elapsed time." />
+      <div class="card-dark p-7">
+        <h3 class="font-display text-2xl">Phase transition rules</h3>
+        <ul class="mt-4 space-y-3 text-sm">
+          {transitionRules.map((r) => (
+            <li class="flex gap-2"><span class="text-accent-soft">→</span><span>{r}</span></li>
+          ))}
+        </ul>
+      </div>
+    </div>
+    <p class="mt-6 max-w-[62ch] text-sm text-ink-soft">
+      The full deployment cadence table (participation/approval in % of supply and absolute
+      MINA) is in the <a href={proposalHref} class="font-medium">full proposal</a>.
+    </p>
+  </section>
+
+  {/* ---------- Safeguards ---------- */}
+  <section id="safeguards" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Safeguards</span>
+    <h2 class="mt-4 max-w-[16ch] font-display text-4xl md:text-6xl">
+      Break glass is a transitional security gate, not a second legislature.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      Five signers can veto, halt, or cancel proposals in emergencies when three submit a
+      signed proof to the ZKApp. The proposed initial composition is three MINA Foundation
+      signers, one o(1) Labs signer, and one Aragon X signer. It should act only when one of
+      these criteria is met:
+    </p>
+    <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {criteria.map((c) => (
+        <div class="rounded-2xl border border-line bg-paper/55 p-5 backdrop-blur-sm">
+          <span class="font-mono text-sm font-semibold text-accent">{c.n}</span>
+          <h3 class="mt-1 font-display text-lg">{c.t}</h3>
+          <p class="mt-2 text-sm text-ink-soft">{c.b}</p>
+        </div>
+      ))}
+    </div>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+      <div class="rounded-2xl border border-line bg-paper/55 p-6 backdrop-blur-sm">
+        <h3 class="flex items-center gap-2 font-display text-xl"><span class="inline-block h-2.5 w-2.5 rounded-full" style="background: var(--color-ok)"></span>Default stance</h3>
+        <p class="mt-2 text-sm text-ink-soft">Non-intervention. Policy disagreement, taste, ideology, and feasibility concerns are for token holders, not the break-glass signers. Interventions require public justification and post-mortems.</p>
+      </div>
+      <div class="rounded-2xl border border-line bg-paper/55 p-6 backdrop-blur-sm">
+        <h3 class="flex items-center gap-2 font-display text-xl"><span class="inline-block h-2.5 w-2.5 rounded-full" style="background: var(--color-accent-brand)"></span>Sunset path</h3>
+        <p class="mt-2 text-sm text-ink-soft">The break glass is removed once community activity reaches sufficient quorum to safeguard funds — its keys sent to a burn address, leaving voter activity as the only safeguard.</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ---------- Validators ---------- */}
+  <section id="validators" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Validators &amp; whales</span>
+    <h2 class="mt-4 max-w-[22ch] font-display text-3xl md:text-5xl">
+      Power is concentrated — so thresholds are set relative to it.
+    </h2>
+    <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_1.2fr]">
+      <div>
+        <p class="max-w-[58ch] text-lg text-ink-soft">
+          The top 10 validators hold ~32.95% of voting power (Kraken alone 14.9%). Exchanges
+          don't vote, so the votable validator share is ~18.05%. The top two accounts hold
+          ~15% each but rarely transact. Thresholds are tuned so top accounts can still move
+          the needle, while attacks remain costlier than the maximum extractable — and the
+          break glass guards the early phases.
+        </p>
+        <p class="mt-4 max-w-[58ch] text-sm text-ink-soft">
+          A 10% proposal bond, burned if the proposal fails, raises the cost of malicious
+          proposals further.
+        </p>
+      </div>
+      <BalanceChart class="m-0" caption="Holdings decline more than logarithmically across the top 1000 accounts." />
+    </div>
+  </section>
+
+  {/* ---------- Next steps ---------- */}
+  <section id="next" class="mx-auto max-w-[1180px] px-5 py-14">
+    <span class="chip">Next steps</span>
+    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
+      A starting point for discussion.
+    </h2>
+    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+      This is a candidate proposal, open for community input — most importantly on break-glass
+      roles and escalation, when to remove the break glass, the deployment cadence, and the
+      voting thresholds.
+    </p>
+    <a href={proposalHref} class="pill pill-primary mt-6">Read the full proposal</a>
+  </section>
+
+  {/* ---------- Updates (forthcoming) ---------- */}
+  <section class="mx-auto max-w-[1180px] px-5 py-14">
+    <div class="mb-6 flex items-baseline justify-between">
+      <div>
+        <span class="chip">Updates</span>
+        <h2 class="mt-3 font-display text-2xl md:text-3xl">Community updates</h2>
+      </div>
+      <a href="/updates" class="font-mono text-sm no-underline hover:text-accent">View all &rarr;</a>
+    </div>
+    {updates.length > 0 ? (
+      <ul class="space-y-4">
+        {updates.slice(0, 3).map((entry) => (
+          <li>
+            <a href={`/updates/${entry.data.slug ?? entry.id}`} class="card-dark block p-6 no-underline">
+              <p class="meta font-mono text-sm">
+                {fmt(entry.data.pubDate)}{entry.data.version ? ` · ${entry.data.version}` : ""}
+              </p>
+              <h3 class="mt-1 font-display text-xl">{entry.data.title}</h3>
+              <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
+            </a>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <div class="rounded-2xl border border-line bg-paper/55 p-8 text-center backdrop-blur-sm">
+        <p class="text-ink-soft">Community updates are forthcoming. Check back soon.</p>
+      </div>
+    )}
+  </section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+const sections = [
+  { href: "/#concept", label: "Concept" },
+  { href: "/#lifecycle", label: "Lifecycle" },
+  { href: "/#thresholds", label: "Thresholds" },
+  { href: "/#deployment", label: "Deployment" },
+  { href: "/#safeguards", label: "Safeguards" },
+];
+---
+
+<div class="sticky top-3 z-40 px-3 md:top-4 md:px-5">
+  <header class="glass-header mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-4 backdrop-blur-[40px] backdrop-saturate-150 md:px-7">
+    <a href="/" class="leading-tight no-underline">
+      <span class="eyebrow block">MINA Foundation</span>
+      <span class="block font-display text-lg text-ink md:text-xl">
+        Decentralized&nbsp;Treasury <span class="text-ink-soft">Updates</span>
+      </span>
+    </a>
+
+    <nav aria-label="Primary" class="flex items-center gap-5">
+      <ul class="hidden items-center gap-6 text-sm font-medium lg:flex">
+        {
+          sections.map((s) => (
+            <li>
+              <a href={s.href} class="text-ink-soft no-underline hover:text-accent">
+                {s.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <a href="/updates" class="pill pill-primary !px-5 !py-2.5 text-sm">Updates</a>
+    </nav>
+  </header>
+</div>

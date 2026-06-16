@@ -1,0 +1,65 @@
+---
+// Native SVG of the account-balance log-scale distribution (replaces a raster export).
+interface Props {
+  caption?: string;
+  class?: string;
+}
+const { caption, class: cls = "my-7" } = Astro.props;
+const ink = "#2d2d2d";
+const grid = "#d9dfe4";
+const muted = "#6b7280";
+const line = "#5b7fe0";
+const rows = [
+  { label: "100000000", y: 92 },
+  { label: "10000000", y: 182 },
+  { label: "1000000", y: 272 },
+  { label: "100000", y: 362 },
+];
+
+// Generate a smooth log-decline curve (power-law: balance ∝ rank^-k → on a log-y,
+// linear-rank axis this is a smooth steep drop into a long shallow tail). Sampling
+// many points keeps it kink-free.
+const x0 = 150, x1 = 800, yTop = 60, yBot = 392;
+const lnMax = Math.log(1000);
+const pts = [];
+for (let i = 0; i <= 140; i++) {
+  const t = i / 140;
+  const rank = Math.exp(t * lnMax);
+  const x = x0 + ((rank - 1) / 999) * (x1 - x0);
+  const y = yTop + t * (yBot - yTop);
+  pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
+}
+const curve = "M" + pts.join(" L");
+---
+
+<figure class={cls}>
+  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
+    <svg
+      viewBox="0 0 820 440"
+      role="img"
+      aria-label="Account balances on a log scale: a steep drop among the top accounts, then a long shallow tail across the top 1000 accounts."
+      class="h-auto w-full"
+      font-family="IBM Plex Sans, system-ui, sans-serif"
+    >
+      <text x="24" y="36" font-size="20" fill={muted}>Account Balance Log Scale</text>
+      <text transform="rotate(-90 44 240)" x="44" y="240" text-anchor="middle" font-size="13" fill={ink}>balance</text>
+
+      {rows.map((r) => (
+        <g>
+          <line x1="150" y1={r.y} x2="800" y2={r.y} stroke={grid} stroke-width="1"></line>
+          <text x="138" y={r.y + 4} text-anchor="end" font-size="13" fill={muted}>{r.label}</text>
+        </g>
+      ))}
+
+      <path
+        d={curve}
+        fill="none"
+        stroke={line}
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      ></path>
+    </svg>
+  </div>
+  {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
+</figure>

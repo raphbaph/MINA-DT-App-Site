@@ -1,0 +1,43 @@
+---
+// Native SVG of the four-stage lifecycle (interlocking arrows), on-brand cool palette.
+interface Props {
+  caption?: string;
+  class?: string;
+}
+const { caption, class: cls = "my-7" } = Astro.props;
+const ink = "#2d2d2d";
+const fill = "#e3e6f6";
+const stroke = "#b7c0ee";
+const stages = ["Submission", "Exploration", "Voting", "Cooldown"];
+---
+
+<figure class={cls}>
+  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
+    <svg
+      viewBox="0 0 760 142"
+      role="img"
+      aria-label="Four-stage lifecycle: Submission, Exploration, Voting, Cooldown — each one epoch."
+      class="h-auto w-full"
+      font-family="IBM Plex Sans, system-ui, sans-serif"
+    >
+      {
+        stages.map((label, i) => {
+          const x = 6 + i * 192;
+          const cx = x + 68; // shared center for the label and its "1 Epoch" caption
+          return (
+            <g>
+              <path
+                d={`M${x},14 L${x + 128},14 L${x + 162},58 L${x + 128},102 L${x},102 Z`}
+                fill={fill}
+                stroke={stroke}
+              />
+              <text x={cx} y={64} text-anchor="middle" font-size="16" fill={ink}>{label}</text>
+              <text x={cx} y={132} text-anchor="middle" font-size="13" fill={ink}>1 Epoch</text>
+            </g>
+          );
+        })
+      }
+    </svg>
+  </div>
+  {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
+</figure>

@@ -1,0 +1,307 @@
+---
+title: "MINA Decentralized Treasury App: Candidate Proposal"
+summary: "Discussion points for deploying a DAO Treasury ZK app that lets the MINA community gradually take control of the decentralized treasury: proposal lifecycle, adaptive S-curve quorum, a phased deployment cadence, and break-glass safeguards."
+pubDate: 2026-05-28
+version: "v1 · discussion draft"
+slug: "proposal-v1"
+---
+
+import Figure from '../../components/Figure.astro';
+import SCurveChart from '../../components/SCurveChart.astro';
+import DeployFlowChart from '../../components/DeployFlowChart.astro';
+import LifecycleChart from '../../components/LifecycleChart.astro';
+import BalanceChart from '../../components/BalanceChart.astro';
+import stages from '../../assets/proposal-stages.png';
+
+## One-sentence summary
+
+This proposal surfaces discussion points for the upcoming deployment of a DAO Treasury ZK App that allows the community to gradually take control of the Decentralized Treasury.
+
+## Introduction
+
+Aragon is proposing a DAO Treasury that allows the community to drive development and growth of MINA independently from the MINA Foundation. The goal is to allow the MINA Foundation to wind down safely over time, based on defined KPIs.
+
+Over time, and with installments ramping up of the amounts available for proposals, the community would eventually steward the funds from the entire treasury.
+
+The parameters will be governed by results from the [MINA Foundation Governance Recommendation Report](https://forums.minaprotocol.com/t/mina-foundation-governance-recommendation-report/7027).
+
+## Technical Challenges
+
+MINA Protocol doesn't natively support delegated voting in a similar fashion as EVM (Ethereum Virtual Machine) chains. This means setting up an EVM-style **Governor** requires the development and deployment of a MINA-native ZKApp which controls the treasury (or parts thereof) and supports proposal lifecycles and voting similar to DAOs in EVM chains, Solana or Near.
+
+The MINA Foundation has funded and overseen the development of such an application, which is currently undergoing audits and rigorous testing on diverse data sets. The ZKApp would support a pre-defined **proposal lifecycle**, pre-defined **adaptive quorum requirements** and can finally execute treasury disbursements for successful proposals.
+
+Finally the ZKApp has a **break glass** multisig functionality where a supermajority of three out of five signers can halt or cancel proposals in case of emergency. More on this later.
+
+This ZKApp — which we will call **DT App** for now (DT = Decentralized Treasury) — needs to be redeployed for parameter changes. This is important to keep in mind for how the Decentralized Treasury will be deployed. **TL;DR:** it can not be one app with increasing slices of the treasury available inside the initial deployment, but a succession of deployments with larger parts of the treasury committed, in tandem with higher quorum and participation requirements for proposals.
+
+The final deployment would hold the rest of the treasury at that point, with matching quorum and participation requirements. Pending proven success to distribute, protect against treasury-draining threats, and signal long-term stability, the break glass multisig would be deprecated by sending the signer keys to a burn address. The break glass functionality — which could be seen as a form of gatekeeping — would finally be removed, giving unfettered and unrestrictable access to the treasury to the **community**.
+
+## Potential failure modes of the DT App
+
+To do this safely, three failure modes have to be avoided:
+
+1. Quorum and participation requirements are so high that no proposal passes, bricking the treasury.
+2. Quorum and participation requirements are too low, allowing for governance attacks.
+3. The ZKApp deployment runs out of sync with the chain, with proofs no longer reconcilable with chain state, bricking the treasury.
+
+Failure modes 1 and 2 are parameter issues. Failure mode 3 is a dev-ops and software-security issue. This proposal focuses on 1 and 2, with 3 currently being robustly tested for with diverse chain-state data sets — main-chain state, devnet chain state, and hand-built chain-state configurations — to ensure robustness.
+
+Multiple deployments help to avoid all three failure modes. This proposal argues for starting small, with low quorum requirements to allow community bootstrapping, and then increasing quorum requirements in tandem with deployed funds, until finally the break glass can be removed.
+
+## Break Glass Composition
+
+The Break Glass has the ability to veto, halt and cancel proposals in extreme cases. The break glass consists of five (5) signers, three (3) of which have to agree and submit a signed proof to the ZKApp so that a veto on a proposal is enacted. This 60% supermajority is in line with point 5.2 of the Aragon report.
+
+The initial five signers will be:
+
+- Mina Foundation, owner tbd
+- Mina Foundation, owner tbd
+- Mina Foundation, owner tbd
+- o(1) Labs, owner tbd
+- Aragon X, owner tbd
+
+Members can be reassigned to different accounts at each redeployment of the DT App. An election process for break glass members is not within the scope of this proposal. We recommend community elections similar to those of other security councils or Guardian multisigs. Each member of the break glass must undergo full KYC/KYB for compliance reasons. Entities can be signers as well, represented by a single account.
+
+## Break Glass Limitations
+
+While the Break Glass can theoretically halt proposals at any stage of the proposal lifecycle for any reason, this proposal offers several candidates for limitations. The final proposal will constitute a social contract and will be honored by any and all members of the break glass.
+
+The idea behind the break glass is that it's a **security gate only**. Its purpose should never be to gatekeep community proposals for reasons like taste, ideological conformity or sense of feasibility. This is only for the community to decide through voting. The break glass should act if one or more of these criteria are met:
+
+### 1. Imminent or Active Risk to DT Funds
+
+When there is a clear, credible threat that DT funds will be stolen, frozen, or materially impaired if no action is taken before the proposal executes or the contract continues operating. Examples include:
+
+- Governance proposals that would transfer a significant portion of the treasury to an attacker, or to a contract under their control.
+- Exploits or bugs enabling infinite draining through repeated claims.
+
+This is the strongest and least controversial ground for intervention.
+
+### 2. Governance Capture and Malicious Voting
+
+Several DAOs explicitly empower break-glass-like roles to act against governance capture or clear vote manipulation. Indicators include:
+
+- A single entity or tightly coordinated group controls sufficient voting power to pass proposals that benefit themselves at the DAO's expense — especially when they acquired tokens cheaply relative to treasury value (e.g., ENS's concern about treasury-draining attacks by large ENS buyers).
+- A proposal is passed by a narrow margin but with unusually high, well-reasoned opposition (e.g., Compound's 400k "NO"-vote heuristic used as a trigger for additional scrutiny).
+- Evidence of bribery, vote buying, or off-chain coercion that corrupts the decision process.
+
+Under these conditions, break glass vetoes because the **voting process itself is compromised**.
+
+### 3. Proposals Whose Primary Effect is Attacker Benefit
+
+Proposals that exist "for the sole benefit of an attacker" are veto candidates. Qualitatively, this includes situations where:
+
+- The economic effect is a sizable, one-sided transfer of value to a narrow set of accounts with no commensurate benefit to the protocol.
+- The action has little or no legitimate governance justification beyond exploiting a temporary governance or market condition.
+
+The break glass can evaluate this by stress-testing who benefits, who bears risk, and whether there is a plausible pro-protocol rationale.
+
+### 4. High-Severity Security or Infrastructure Incidents
+
+Many guardian contracts are defined primarily as incident-response bodies. Triggers include:
+
+- Discovery of critical DT App vulnerabilities that can be exploited on short notice.
+- Active exploitation of a live bug affecting protocol components.
+- Infrastructure attacks that make normal operation unsafe.
+
+In these cases, the break glass can **pause** affected proposals and may also veto proposals that would exacerbate the issue or prevent needed mitigations.
+
+### 5. Procedural or Technical Irregularities in a Proposal
+
+The break glass can delay or cancel proposals if authors take improper actions. Reasons to halt execution are:
+
+- Proposals were malformed, misencoded, or technically incorrect (e.g., wrong accounts, parameters) in ways that would cause unintended effects if executed.
+- Off-chain descriptions and on-chain payloads diverge materially (e.g., "description-payload mismatch").
+- The proposal violates established process norms (e.g., bypassing required discussion periods or audits).
+
+In such cases, guardians act to prevent accidents, not to substitute their policy judgment.
+
+## Normative Design Principles for When the Break Glass should Act
+
+### A Last-Resort Mechanism
+
+The break glass should be a **last-resort mechanism**, never a permanent second legislative chamber.
+
+- Default stance is non-intervention; policy disagreements alone are not grounds for veto or pause.
+- Public justification and post-mortems after interventions are a must, reinforcing that actions are exceptional.
+
+### Time-Limited Authority and Renewal
+
+The break glass will be removed once sufficient community activity manages to achieve sufficient quorum to safeguard funds. Before that, break glass signers can be reassigned on redeployments, pending previous community votes. This is in line with best practices from the wider DAO space:
+
+- **ENS:** anyone can revoke the Security Council's `cancel` role after two years.
+- **Compound:** Proposal Guardian veto power automatically expires after six months unless renewed.
+- Governance practitioners recommend annual or biannual expirations to avoid permanent power concentration.
+
+This encourages the break glass to be transitional training wheels. These criteria should be seen as candidates and inputs for discussion, not as decree. Aragon will propose a final set of criteria for break glass actions in 4 weeks, and incorporate community feedback.
+
+## Proposal Lifecycle
+
+The initial Aragon report had recommendations for proposal lifecycle length, summarized below.
+
+<Figure src={stages} alt="Recommended proposal stages: pre-proposal discussion, submission (3 days), exploration/alignment (7 days), voting (7 days), and cooldown / final exit window (7 days base case), with descriptions of each." caption="Recommended proposal stages and descriptions, from the initial Aragon report." />
+
+During the development of the DT App, technical requirements necessitated a simpler approach. Each of the four stages is now one MINA Epoch in length. Under the MESA update each epoch equals about 1 week, meaning a full lifecycle will be four weeks. These parameters are fixed and can not be changed without redevelopment and reauditing the DT App.
+
+<LifecycleChart caption="The DT App proposal lifecycle: four stages, one epoch (~1 week) each." />
+
+## Quorum and Break Glass Interaction
+
+The purpose of quorum is to increase the cost of governance attacks. The expected utility of a governance attack is the expected profit of all sales of tokens gained, minus the cost of executing the attack. This cost is mostly driven by the cost to acquire the necessary amount of tokens to vote on a malicious governance proposal in such a way that any opposition can be surmounted — i.e. the total amount of funds necessary to buy and borrow enough tokens to facilitate the attack, minus the proceeds from selling the tokens again afterward.
+
+In a scenario with no break glass, Guardian or security roles, quorum has to be set so high that the cost to acquire enough tokens for the attack is higher than the treasury — otherwise the rational thing to do would be to attack and drain the treasury.
+
+A break glass fundamentally changes the position, because the attacker has to factor in the high likelihood of the proposal being spotted by a dedicated team and canceled. This means the existence of a break glass affords massively lower quorums than without such a security feature. A look at the wider DAO world reveals many DAOs — Sky, Compound, ZKSync and others — with treasuries much larger than quorum, but with strong guardians, security councils and other mechanisms that prevent governance attacks reliably. This deterrent often leads to governance attacks not happening in the first place, because rational attackers are deterred.
+
+The DT App will have a break glass multisig in the beginning, which means quorum can be relatively low, to allow the community to form and successfully execute proposals to gain momentum. Given the voting power in top addresses and top validators, even the first iterations of the DT App will feature a minimum quorum of 8x the treasury size, leading to massive governance security from a purely economical perspective — as long as well-aligned top accounts or validators vote.
+
+The initial Aragon report introduced adaptive quorum: more participation and more votes in favor are required, proportional to the requested amount. This is now modified with a weight such that initially proposals can pass very easily (since 100% of the small available treasury is a small amount), and which finally is set such that governance attacks are costlier than the maximum amount extractable.
+
+## Quorum and Participation Thresholds
+
+Quorum and participation thresholds are adaptive, as proposed in the Aragon report, but follow a simple S-curve and aren't reflexive, as initially suggested. The criteria for a proposal to be accepted can be summarized as:
+
+```
+Approved  ⇔  (Y + N + A₀ ≥ RequiredParticipation)
+          ∧  (Y + N > 0)
+          ∧  (Y / (Y + N) ≥ RequiredApproval)
+
+where
+  Y  = yay voting weight
+  N  = nay voting weight
+  A₀ = abstain voting weight
+```
+
+Abstain counts for participation, but not approval. Approval is only measured over yay+nay votes.
+
+The thresholds are dynamic. For example, let:
+
+```
+B = 10,000
+x = min((proposalAmount / treasuryBalance), 1)
+curve(x, c) = x / (x + c(1 - x))
+
+RequiredParticipationBp = 2,000 + (5,000 - 2,000) * curve(x, 0.05)
+RequiredApprovalBp      = 5,100 + (7,000 - 5,100) * curve(x, 0.10)
+
+RequiredParticipation =
+    stakingEpochTotalCurrency * Modifier
+    * RequiredParticipationBp / 10,000
+```
+
+The thresholds rise from:
+
+- Participation required: **Pmin 20% → Pmax 50%**
+- Approval required: **Amin 51% → Amax 70%**
+
+As proposal size grows relative to treasury balance, both requirements increase. Proposal size is capped at 100% for threshold purposes, so anything at or above the treasury balance uses the max thresholds (50% participation required, 70% approval required).
+
+Example values:
+
+| Treasury request | Participation | Approval |
+| --- | --- | --- |
+| 1% | 25.04% | 52.74% |
+| 10% | 40.68% | 60.99% |
+| 50% | 48.56% | 68.27% |
+| 100% | 50.00% | 70.00% |
+
+<SCurveChart caption="Required participation and approval follow an S-curve in proposal size (capped at 100% of treasury)." />
+
+## Treasury Distribution Cadence
+
+As outlined in the chapter on failure modes, it is imperative to deploy the treasury in multiple rounds of ZKApps to avoid putting all the eggs in one proverbial basket. The amount of MINA voting on a proposal should be higher than the amount a proposal can distribute *at the point where the break glass is removed*. It can be lower before that, because the break glass can stop malicious proposals at any stage before that, constituting a last line of defense.
+
+The ZKApp has been tested rigorously and audited on multiple data sets, including the full live mainnet. Nevertheless "reality is an undefeated champion", so we propose to start the initial deployment with a relatively small amount deployed and low participation requirements. The total deployable treasury size is **~55M $MINA or ~2.8M USD** at today's prices — a sizable treasury that can fund and bootstrap exciting developments, in line with the initial vision for the DT App by maht0rz.
+
+We suggest a small initial deployment, a growth phase, and a final decentralization step:
+
+- **Test Phase** — gather real-world data on voting participation and proposal volume. The break glass is active and the Foundation retains signer authority, so the treasury can be drained and redeployed in case of parameter errors. Deploys **1 million $MINA** — a meaningful start without putting too much at risk. Thresholds are low and reachable by individual top-10 validators, on purpose, to bootstrap activity.
+- **Scale Up Phase** — **USD 1 million worth of $MINA** is deployed; break glass active and signer authority retained. Participation ramps up so that considerable validator participation, or activation of top-100 accounts, is necessary to pass good proposals, while real value is available for builders. These numbers may be readjusted with learnings from the Test Phase.
+- **Final Deployment** — signer authority is relinquished; the break glass is initially active but will send its signer keys to a burn address once a cadence of successful deployments is reached. Up to **34 million $MINA** are available. This is the final decentralisation step; after the break glass is burned, the only remaining safeguard is voter activity.
+
+*All amounts of $MINA and USD below are in thousands.*
+
+| Deployment | Treasury (k MINA) | Pmax/T | Modifier | Pmin %Supply | Pmax %Supply | Amin %Supply | Amax %Supply | Pmin (k MINA) | Pmax (k MINA) | Amin (k MINA) | Amax (k MINA) | Treasury (k USD) |
+| --- | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: | --: |
+| Test Phase | 1,000.00 | 32.21x | 5.00% | 1.00% | 2.50% | 0.50% | 1.75% | 12,885 | 32,213 | 6,443 | 22,549 | 51.18 |
+| Scale Up Phase | 20,000.00 | 9.02x | 28.00% | 5.60% | 14.00% | 2.80% | 9.80% | 72,158 | 180,394 | 36,079 | 126,276 | 1,023.55 |
+| Final Deployment | 34,000.00 | 8.53x | 45.00% | 9.00% | 22.50% | 4.50% | 15.75% | 115,968 | 289,919 | 57,984 | 202,943 | 1,740.03 |
+| **Total Deployed** | **55,000.00** | | | | | | | | | | | **2,814.75** |
+
+**Table explanation.** *Treasury* is the amount of $MINA deployed in the current iteration and the maximum available to any proposal. *Pmax/T* is how much larger the participation required for the biggest funding ask must be than the treasury the proposal is demanding. *Modifier* is the multiplier applied to circulating supply when calculating thresholds (otherwise the first small proposal would already need 20% of circulating supply voting). *Pmin / Pmax %Supply* are the minimum and maximum **participation** requirements as a percentage of circulating supply; *Amin / Amax %Supply* the **approval** requirements. The k-MINA columns are the corresponding absolute values (in thousands). The far-right column is the deployed treasury in thousands of USD, calculated with a 14-day moving average of the $MINA price as of 2026-05-28 (source: Coingecko).
+
+<DeployFlowChart caption="Phased deployment: Test → Scale Up → Final, with the break glass burned at the end." />
+
+## Timeline for DT App Deployments
+
+Given that Foundation funding expires in September, we propose the following criteria for moving between phases:
+
+- **Test Phase → Scale Up Phase:** as soon as the treasury deployed to the Test Phase is spent, two consecutive proposals pass, or two months after the initial deployment went live. Should the treasury remain in the Test Phase deployment, it will be drained and deployed to Scale Up then.
+- **Scale Up Phase → Final Deployment:** as soon as the treasury deployed to the Scale Up Phase is spent, four consecutive proposals pass, or three months after the initial deployment passed.
+
+## Validators and Whales
+
+The top 10 validators on the MINA chain currently account for **32.95%** of the voting power. Of this, Kraken accounts for 14.9% alone. We have never seen an exchange vote on a proposal, since their compliance departments don't allow it — which brings the *votable* validator share to **18.05%**. The top two accounts hold around 15% of voting power each, but have relatively low transaction counts, leading us to believe they'd likely not bother voting on proposals either.
+
+In the final deployment, the participation required for very large proposals is 22.5% of supply and for small proposals 9.0%. In theory the top two validators (except Kraken) could pass a very small proposal at this stage. However, this stage will only be reached if there's a vibrant community — otherwise quorum at lower stages would fail too frequently or funds would not get spent. At 22.5%, almost all of the top 10 validators would have to collude to pass a proposal, which could also be seen as broad acceptance. Another safety mechanism is the bond of 10% of the proposal which gets burned if the proposal doesn't pass, making malicious proposals even riskier.
+
+*Top 10 Validators according to MinaScan*
+
+| Name | Account | Staked | VP |
+| --- | --- | --: | --: |
+| Kraken | B62qoiM41U5gBnjujQRgeewfkK9VmgVT8ifrRRwAsqBUM6pdxi9ywk2 | 192,052,586 | 14.90% |
+| MINAExplorer | B62qpge4uMq4Vv5Rvc8Gw9qSquUYd6xoW1pz7HQkMSHm6h1o7pvLPAN | 73,548,574 | 5.71% |
+| AuroWallet | B62qq3TQ8AP7MFYPVtMx5tZGF3kWLJukfwG1A1RGvaBW1jfTPTkDBW6 | 59,194,232 | 4.59% |
+| — | B62qpbpoWmfjZ12jA8TYrS8QktRDYGYjz2cj41tuUe1f2UP2wfpKvXs | 39,169,385 | 3.04% |
+| Carbonara | B62qq6ZYPG5JsjZnGJ3pADmRn6hU6qy13EhraTSymjSgyEDwoDR9Gd6 | 15,470,046 | 1.20% |
+| InfStones | B62qopHVr6nGCsQgrvsBsoxDm1E5CEdMkDSN3jneRnxKpR5iiXnTbas | 13,495,855 | 1.05% |
+| PiconBello | B62qrQiw9JhUumq457sMxicgQ94Z1WD9JChzJu19kBE8Szb5T8tcUAC | 12,522,562 | 0.97% |
+| — | B62qmkGkjvFwmkqv6erSmTGMx9ABhuxJqpCi4gyUtxFDwif97j2X5zp | 7,166,818 | 0.56% |
+| 6Block | B62qpsikYYhTaAXw8XdgGhQtLsnecHF89LZdW2bGTa4aj4mePWPHxPe | 6,223,513 | 0.48% |
+| — | B62qqnGyRwo82Hv6hr1KydpUQzTmYyBAQDVrxc6TxbdJxrtSYGr8QXa | 5,770,824 | 0.45% |
+
+*Top 10 accounts according to MinaScan*
+
+| Account | Amount | Percent | Notes |
+| --- | --: | --: | --- |
+| B62qjsFTBw4TVwRRxNVrmwJfQqXfmMC4DVa2moCe9f8ErvBYd6f7npr | 201,513,399 | 15.64% | |
+| B62qrQKS9ghd91shs73TCmBJRW9GzvTJK443DPx2YbqcyoLc56g1ny9 | 186,690,881 | 14.49% | |
+| B62qkYkpdUh32uxvd42xHVhbYZ5gpreokrgADRWhE9Sk6UtXwEWF8BR | 93,080,398 | 7.22% | |
+| B62qr5sCThVve9tHdk6AD6rNpdYKzHJ2Dwd8uJmYVTzZFiHAPisYDry | 73,635,155 | 5.71% | |
+| B62qouNvgzGaA3fe6G9mKtktCfsEinqj27eqTSvDu4jSKReDEx7A8Vx | 61,749,686 | 4.79% | |
+| B62qkSqvzc1BiudRYMeVcxyivYMu1FWuMX5T9GzkMqujdw2qk5idUjY | 39,304,755 | 3.05% | Binance |
+| B62qmjkodb4YAahsyb9U89t1EZ4yRHg1LgY46mFy2ohtsMPiiSVovgT | 34,882,558 | 2.71% | |
+| B62qiXKdSTZV4d841n9rHwbCN9aYeJHjbq7dbtPnseniUq9sWCRo2j3 | 30,668,272 | 2.38% | Paribu |
+| B62qiW9Qwv9UnKfNKdBm6hRLNDobv46rVhX1trGdB35YCNT33CSCVt5 | 28,788,414 | 2.23% | |
+| B62qis4n4qqWNQZg9DoBDiR4EFQjf3VvKkJbznkgWZqEh1tcTgXyQ42 | 19,649,420 | 1.52% | Bybit |
+
+<BalanceChart caption="Account balances on a logarithmic scale: holdings decline more than logarithmically across the top 1000 accounts." />
+
+Viewed in logarithmic scale we can see that the top 1000 accounts follow a more-than-logarithmic decline in holdings — the top 2 accounts hold as much MINA as the next 10, for instance. For treasury governance this means decision-making power is highly centralized, and the top 10 accounts and validators can affect decisions almost unilaterally.
+
+The voting threshold candidates proposed here attempt to allow a relatively low barrier to entry — relative to top account and top validator voting power. The final iterations are such that top accounts can still move the needle by themselves, but otherwise smaller accounts would have no chance of passing *any* proposal. We assume larger accounts would vote in favor of value-accruing proposals that boost the value of $MINA, since their size gives them every reason to do so.
+
+Before the removal of the break glass, it can monitor proposals and cancel value-extractive attempts; after that, voting power is all that counts. In the end any social system — which voting systems inevitably are — depends on the maintenance of a spirit of cooperation and value creation. Every technical solution breaks down under disinterest or increasingly malicious participation. The DT App is a promising step toward community activation and empowerment, and its very goal is to avoid that worst case.
+
+## Operational Requirements
+
+The DT App needs to be hosted on a capable server, needs an archive node, plus enough workers to do vote tallying and verification once a month. The associated cost and entities should be selected and funded by the community over time. Initially, **Aragon will operate the full application and its dependencies for a period of 24 months**. Operational cost breaks down into:
+
+- Hosting of the DT App frontend, including necessary security updates.
+- Frontend and UX improvements where necessary.
+- Hosting and DevOps for an archival node.
+- Hosting and DevOps for the workers that keep the ZKApp in sync with chain state.
+
+DevOps is going to take around 40 hrs per month of system-admin resources. Hosting can be done on an affordable VPS, but the workers need a minimum of 16 vCPU and 64 GB of RAM — so even if they're only used 3–4 days a month, this might cost around $70–100 per server per month.
+
+## Next Steps
+
+This proposal is meant as a starting point for discussion and deliberation, most importantly on:
+
+- Break glass roles and escalation path
+- When to remove the break glass
+- Treasury deployment cadence
+- Voting thresholds
+
+We'll leave this thread open for two weeks and then incorporate feedback into a final proposal for DT App deployment. After deployment we need to monitor voting behaviour and proposal quality first and foremost, and adapt to the realities of the MINA community so that good proposals are created — and can pass. Onwards!

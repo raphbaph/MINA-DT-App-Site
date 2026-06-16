@@ -1,0 +1,55 @@
+---
+// Native SVG recreation of the adaptive-quorum S-curve diagram (replaces a raster export).
+// Quorum-required curve in brand violet; treasury-size curve in charcoal; a "break glass
+// removed" marker line. Brand-colored, crisp at any size, themeable.
+interface Props {
+  caption?: string;
+}
+const { caption } = Astro.props;
+const ink = "#2d2d2d";
+const violet = "#8576c5";
+---
+
+<figure class="my-7">
+  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
+    <svg
+      viewBox="0 0 440 340"
+      role="img"
+      aria-label="Two S-curves over time: required quorum (violet) sits above treasury size (charcoal); both rise and plateau. A vertical marker shows where the break glass is removed."
+      class="h-auto w-full"
+      font-family="IBM Plex Sans, system-ui, sans-serif"
+    >
+      <defs>
+        <marker id="arrow" markerWidth="9" markerHeight="9" refX="3" refY="4" orient="auto">
+          <path d="M0,0 L8,4 L0,8 z" fill={ink}></path>
+        </marker>
+      </defs>
+
+      <!-- Axes -->
+      <line x1="60" y1="300" x2="60" y2="24" stroke={ink} stroke-width="2" marker-end="url(#arrow)"></line>
+      <line x1="60" y1="300" x2="416" y2="300" stroke={ink} stroke-width="2" marker-end="url(#arrow)"></line>
+
+      <!-- "non-zero origin" dashed break on the y-axis -->
+      <line x1="60" y1="288" x2="60" y2="278" stroke="#ffffff" stroke-width="4"></line>
+      <line x1="56" y1="286" x2="64" y2="282" stroke={ink} stroke-width="1.5"></line>
+      <line x1="56" y1="290" x2="64" y2="286" stroke={ink} stroke-width="1.5"></line>
+
+      <!-- Treasury size (lower S-curve) -->
+      <path d="M72,250 C 188,250 236,140 408,128" fill="none" stroke={ink} stroke-width="3" stroke-linecap="round"></path>
+      <!-- Quorum required (upper S-curve) -->
+      <path d="M72,168 C 178,168 228,72 408,62" fill="none" stroke={violet} stroke-width="3" stroke-linecap="round"></path>
+
+      <!-- Break glass removed marker -->
+      <line x1="330" y1="40" x2="330" y2="300" stroke={ink} stroke-width="1.5"></line>
+      <text x="338" y="250" font-size="12" fill={ink}>Break glass</text>
+      <text x="338" y="266" font-size="12" fill={ink}>removed</text>
+
+      <!-- Axis labels -->
+      <text transform="rotate(-90 24 175)" x="24" y="175" text-anchor="middle" font-size="13" fill={ink}>
+        Treasury size · <tspan fill={violet}>Quorum required</tspan>
+      </text>
+      <text x="238" y="332" text-anchor="middle" font-size="13" fill={ink}>Time</text>
+    </svg>
+  </div>
+  {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
+</figure>

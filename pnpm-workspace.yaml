@@ -1,0 +1,29 @@
+# pnpm settings — supply-chain hardening for AI-assisted / agent installs.
+# (pnpm 10.16+ reads project settings from this file.)
+
+# Quarantine newly published versions: pnpm will refuse to install any version
+# released less than this many minutes ago, resolving to the previous vetted
+# version instead. Defends against the detection window after a package is
+# compromised and a malicious version is republished. 4320 = 3 days; raise to
+# 10080 (7 days) for a more conservative posture.
+minimumReleaseAge: 4320
+minimumReleaseAgeExclude: []
+
+# Never auto-run every package's install/build scripts.
+dangerouslyAllowAllBuilds: false
+
+# Allowlist: the ONLY packages permitted to run lifecycle (build) scripts.
+# Everything else's postinstall/install scripts are blocked — this is the main
+# defense against malicious install-script supply-chain attacks.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - "@tailwindcss/oxide"
+
+# Refuse silent drift: warn if node_modules no longer matches the lockfile
+# before running scripts.
+verifyDepsBeforeRun: warn
+
+allowBuilds:
+  esbuild: true
+  sharp: true
