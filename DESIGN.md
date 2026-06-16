@@ -67,17 +67,17 @@ elevation:
   glass: "0 14px 44px rgb(45 45 45 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.85)"
   cardDark: "0 16px 44px rgb(20 24 28 / 0.22)"
 components:
-  button:                               # primary CTA — FLAT periwinkle pill, ink text
+  button:                               # primary CTA — FLAT periwinkle, ink text
     backgroundColor: "#9A94E8"          # blue-violet, the complement to the amber chips
     textColor: "{colors.ink}"
-    rounded: "{rounded.full}"
+    rounded: "8px"                       # softly rounded, NOT a full pill
     padding: "{spacing.sm} {spacing.lg}"
     note: "flat color — no gloss, no emboss, no shadow"
-  chip:                                 # section eyebrow tag — orangey-yellow, SHARP rectangle
+  chip:                                 # section eyebrow tag — orangey-yellow rectangle
     backgroundColor: "{colors.warn}"
     textColor: "{colors.ink}"
     typography: "{typography.eyebrow}"
-    rounded: "0"                         # no radius
+    rounded: "3px"                       # just a smidge of radius
 
   glassHeader:                          # FLOATING, glossy, chunky nav (inset from all edges)
     backgroundColor: "rgb(255 255 255 / 0.7)"
@@ -148,18 +148,17 @@ the bloomed background, with a saturation/brightness boost so it looks vibrant. 
 use `{elevation.cardDark}`. Borders + cool fills carry the rest.
 
 ## Shapes
-Softly rounded: `{rounded.md}` (16px) for cards, glass, calculator; `{rounded.sm}` (8px) for
-inputs, chips, code; `{rounded.full}` (pill) for CTAs, badges, slider thumb; `{rounded.lg}`
-(40px) for occasional large feature panels. No decorative blobs — blooms + glass + rounding
-do the work.
+Softly rounded: `{rounded.md}` (16px) for cards, glass, calculator; **8px** for buttons and
+inputs/code; **3px** (a smidge) for the amber section chips; `{rounded.full}` (pill) for
+badges and the slider thumb; `{rounded.lg}` (40px) for occasional large feature panels. No
+decorative blobs — blooms + glass + rounding do the work.
 
 ## Components
-- **Button:** `components.button` — pill, **flat periwinkle (blue-violet) fill with ink text**,
-  no gloss/emboss/shadow; chosen as the complement to the amber chips. Visible focus ring.
-  Secondary = translucent white pill with a line border.
+- **Button:** `components.button` — **flat periwinkle (blue-violet) fill with ink text**, 8px
+  radius (not a full pill), no gloss/emboss/shadow; chosen as the complement to the amber
+  chips. Visible focus ring. Secondary = translucent white pill-ish button with a line border.
 - **Section eyebrow chip:** `components.chip` — every section opens with the **orangey-yellow
-  (amber) tag** (uppercase mono, **sharp rectangle, no radius**), then the serif headline.
-  Buttons use a small 8px radius — so the sharp tags and rounded buttons read distinctly.
+  (amber) tag** (uppercase mono, near-square with a 3px smidge of radius), then the serif headline.
 - **Floating glass header:** `components.glassHeader` — a glossy, chunky glass bar that
   floats inset from all edges (not touching the sides), heavy blur + saturation, rounded.
 - **Stat cards:** big bold **sans** numbers (IBM Plex Sans) with the description below — not
@@ -169,14 +168,16 @@ do the work.
 - **Dark feature card:** `components.cardDark` — concept/failure-mode/safeguard/update cards
   and the "phase transition rules" panel; white serif heading, light cool-gray body, lavender
   links.
-- **Eyebrow:** mono uppercase kicker; or the amber `components.eyebrowChip` for emphasis
-  (e.g. "SAFEGUARDS").
+- **Eyebrow:** every section kicker is the amber `components.chip` (uppercase mono); the plain
+  mono `.eyebrow` (no fill) is reserved for the header brand label ("MINA Foundation").
 - **Numbered cards:** 01–05 markers (mono, accent-colored) over serif titles — used for the
   break-glass criteria. A deliberate editorial device here, not slop.
 - **Data tables:** dark charcoal header row, white headers; zebra body via `{colors.paperPanel}`,
   right-aligned mono numerics, addresses in mono; `<caption>` + scoped headers.
-- **Figures:** diagrams (lifecycle, S-curve, deployment flow, balance distribution) with
-  captions, optimized via `astro:assets`.
+- **Figures/charts:** the four diagrams (lifecycle, S-curve, deployment flow, balance
+  log-curve) are **native SVG components** (`LifecycleChart`, `SCurveChart`,
+  `DeployFlowChart`, `BalanceChart`) — brand-colored, crisp, captioned. The remaining raster
+  (`proposal-stages.png`) renders via `Figure` (`astro:assets`).
 - **Footer:** dark charcoal, light text.
 
 ## Do's and Don'ts
