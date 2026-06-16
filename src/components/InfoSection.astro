@@ -1,0 +1,18 @@
+---
+// Fogged-glass information section (see DESIGN.md → Elevation & Depth).
+interface Props {
+  title?: string;
+  id?: string;
+  class?: string;
+}
+const { title, id, class: cls = "" } = Astro.props;
+---
+
+<section id={id} class={`card-dark p-7 md:p-10 ${cls}`}>
+  {
+    title && (
+      <h2 class="mb-4 font-display text-2xl md:text-3xl">{title}</h2>
+    )
+  }
+  <slot />
+</section>

@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "line-length",
+        "value": "*",
+        "files": [
+          "**/updates/**"
+        ],
+        "reason": "Data tables (deployment cadence, validator/account holdings) are tabular reference data — intentionally wide, with horizontal scroll on mobile. Prose is capped at 62ch.",
+        "createdAt": "2026-06-16T22:41:22.138Z"
+      },
+      {
+        "rule": "em-dash-overuse",
+        "value": "*",
+        "files": [
+          "**/updates/**"
+        ],
+        "reason": "Faithful reproduction of the source governance document; em-dashes are the original author's voice, not generated copy.",
+        "createdAt": "2026-06-16T22:41:22.959Z"
+      },
+      {
+        "rule": "numbered-section-markers",
+        "value": "*",
+        "files": [
+          "**/updates/**"
+        ],
+        "reason": "False positive: matches financial figures in data tables (e.g. 1,740.03), not section-label markers.",
+        "createdAt": "2026-06-16T22:41:23.854Z"
+      }
+    ]
+  }
+}

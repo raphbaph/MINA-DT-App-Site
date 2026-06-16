@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------------------
+   Design tokens — mirror DESIGN.md. Sampled from MINA Foundation.
+---------------------------------------------------------------------------- */
+@theme {
+  --color-ink: #2d2d2d;
+  --color-ink-soft: #4f5b67;
+  --color-paper: #ffffff;
+  --color-paper-panel: #f0f4f7;
+  --color-paper-panel-alt: #e9eff4;
+  --color-line: #b7cdd8;
+  /* Brand violet (#8576c5) is too light as text/button; the interactive accent is a
+     darker AA-passing violet. The brand violet lives on for decorative/large use. */
+  --color-accent: #574aa0;
+  --color-accent-brand: #8576c5;
+  /* Secondary: ultra-light lavender, almost blue (pale periwinkle) — soft fills,
+     tints, chips, glass sheen. Use --color-lavender-ink for a readable lavender
+     link/label on dark surfaces. */
+  --color-accent-soft: #e3e6f6;
+  --color-lavender-ink: #b7c0ee;
+  --color-accent-ink: #ffffff;
+  --color-ok: #00ca92;
+  --color-warn: #ffc22d;
+
+  --font-display: "Feijoa Display", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 40px;
+}
+
+:root {
+  --glass-tint: rgb(244 247 249 / 0.45);
+  --glass-blur: blur(18px);
+  /* Using a var keeps Lightning CSS from dropping the unprefixed backdrop-filter. */
+  --glass-blur-strong: blur(40px);
+}
+
+/* ----------------------------------------------------------------------------
+   Base — blue/green ultra-light surface with soft, lightly-grainy gradient blooms
+---------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Clear the floating sticky header when jumping to in-page anchors. */
+    scroll-padding-top: 7.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    position: relative;
+    font-family: var(--font-body);
+    color: var(--color-ink);
+    background-color: #e8eeee; /* blue/green ultra-light base, not pure white */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Soft, large gradient blooms (violet → blue → green-teal). */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background:
+      radial-gradient(72rem 60rem at 102% 104%, rgb(133 118 197 / 0.5), transparent 55%),
+      radial-gradient(56rem 50rem at 96% 4%, rgb(150 174 222 / 0.42), transparent 55%),
+      radial-gradient(64rem 58rem at -8% 26%, rgb(168 210 202 / 0.45), transparent 55%);
+  }
+
+  /* Subtle film grain so the blooms read as lightly pixelated, not slick. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 1.12;
+    color: var(--color-ink);
+    text-wrap: balance;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-underline-offset: 0.18em;
+  }
+  a:hover { color: color-mix(in oklab, var(--color-accent), black 16%); }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  img { max-width: 100%; height: auto; }
+  ::selection { background: var(--color-accent-soft); color: var(--color-ink); }
+}
+
+/* ----------------------------------------------------------------------------
+   Helpers
+---------------------------------------------------------------------------- */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* Section eyebrow tag — orangey-yellow pill (the brand kicker for every section). */
+.chip {
+  display: inline-block;
+  border-radius: 3px; /* just a smidge of radius on the amber tag */
+  background: var(--color-warn);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.8rem;
+}
+
+/* Glossy, vibrant fogged glass (header, calculator, feature surfaces) */
+.glass {
+  background:
+    linear-gradient(
+      160deg,
+      rgb(255 255 255 / 0.62),
+      rgb(255 255 255 / 0.16) 46%,
+      rgb(227 230 246 / 0.18)
+    ),
+    var(--glass-tint);
+  backdrop-filter: var(--glass-blur) saturate(1.7) brightness(1.05);
+  -webkit-backdrop-filter: var(--glass-blur) saturate(1.7) brightness(1.05);
+  border: 1px solid rgb(255 255 255 / 0.65);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 14px 44px rgb(45 45 45 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.85);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: var(--color-paper); }
+}
+
+/* Floating, glossy, chunky glass nav bar (inset from all edges). */
+.glass-header {
+  /* Translucent enough to SEE content behind; the heavy blur (applied via Tailwind
+     backdrop utilities in the markup, which compile unprefixed correctly) reads as fog. */
+  background: linear-gradient(165deg, rgb(255 255 255 / 0.55), rgb(232 238 238 / 0.42));
+  border: 1px solid rgb(255 255 255 / 0.65);
+  border-radius: var(--radius-md);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 12px 40px rgb(45 45 45 / 0.12);
+}
+
+/* Pill buttons — primary is light lavender (the secondary color) with ink text. */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  /* Buttons are softly rounded — less round than the full-pill eyebrow tags. */
+  border-radius: 8px;
+  padding: 0.7rem 1.5rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+/* Flat periwinkle (blue-violet) — the complement to the amber chips. No gloss/emboss. */
+.pill-primary {
+  background: #9a94e8;
+  color: var(--color-ink);
+}
+.pill-primary:hover { background: #8b84e0; color: var(--color-ink); }
+.pill-secondary {
+  background: rgb(255 255 255 / 0.55);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pill-secondary:hover { border-color: var(--color-accent); color: var(--color-ink); }
+
+/* Custom select — replace the inconsistent native chevron with a clean brand one. */
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232d2d2d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 18px;
+}
+
+/* Dark charcoal feature cards (the MINA depth recipe against the light bg) */
+.card-dark {
+  background:
+    radial-gradient(130% 120% at 0% 0%, #3a3a3d, #2a2a2c 55%),
+    var(--color-ink);
+  color: rgb(223 231 236 / 0.92);
+  border: 1px solid rgb(255 255 255 / 0.08);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 44px rgb(20 24 28 / 0.22);
+}
+.card-dark h2,
+.card-dark h3,
+.card-dark h4 { color: #fff; }
+.card-dark p { color: rgb(205 217 225 / 0.88); }
+.card-dark strong { color: #fff; }
+.card-dark .eyebrow,
+.card-dark .meta { color: #aebcc7; } /* ≥4.5:1 on charcoal */
+.card-dark a { color: var(--color-lavender-ink); }
+
+/* ----------------------------------------------------------------------------
+   Long-form document styling for rendered MDX (.doc wrapper)
+---------------------------------------------------------------------------- */
+.doc {
+  font-size: 1.125rem;
+  color: var(--color-ink);
+}
+.doc > * + * { margin-top: 1.1em; }
+.doc h2 {
+  font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.25rem);
+  margin-top: 2.4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--color-line);
+}
+.doc h3 { font-size: 1.375rem; margin-top: 1.8rem; }
+.doc h2 + *, .doc h3 + * { margin-top: 0.6em; }
+.doc p, .doc li { max-width: 70ch; }
+.doc ul, .doc ol { padding-left: 1.4em; }
+.doc ul { list-style: disc; }
+.doc ol { list-style: decimal; }
+.doc li + li { margin-top: 0.4em; }
+.doc a { font-weight: 500; }
+.doc strong { font-weight: 600; }
+.doc code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--color-paper-panel);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+}
+.doc pre {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  background: var(--color-paper-panel);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+}
+.doc pre code { background: none; padding: 0; }
+.doc blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1rem;
+  color: var(--color-ink-soft);
+}
+
+/* Data tables (deployment cadence, validator holdings) */
+.doc .table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-paper);
+}
+.doc table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+.doc caption {
+  caption-side: top;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink-soft);
+  padding: 0.6rem 0.8rem;
+}
+.doc th,
+.doc td {
+  padding: 0.5rem 0.8rem;
+  border-bottom: 1px solid var(--color-line);
+  text-align: right;
+  white-space: nowrap;
+}
+.doc th:first-child,
+.doc td:first-child {
+  text-align: left;
+  font-family: var(--font-body);
+}
+.doc thead th {
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--color-ink);
+  border-bottom: 2px solid var(--color-line);
+}
+.doc tbody tr:nth-child(even) {
+  background: var(--color-paper-panel);
+}
