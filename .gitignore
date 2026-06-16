@@ -1,0 +1,10 @@
+# Tooling / telemetry artifacts
+.tempor/
+.tempor_beacon/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
