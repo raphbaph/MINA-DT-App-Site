@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MINA Decentralized Treasury App</title>
+    <meta
+      name="description"
+      content="A proposal-maker guide to the MINA Decentralized Treasury App, including lifecycle, adaptive thresholds, deployment cadence, and break-glass safeguards."
+    >
+    <style>
+      :root {
+        --paper: oklch(0.975 0.018 83);
+        --paper-strong: oklch(0.94 0.034 83);
+        --ink: oklch(0.18 0.038 246);
+        --muted: oklch(0.42 0.034 246);
+        --line: oklch(0.79 0.036 84);
+        --line-strong: oklch(0.55 0.06 78);
+        --orange: oklch(0.72 0.16 48);
+        --amber: oklch(0.84 0.12 82);
+        --teal: oklch(0.62 0.105 183);
+        --plum: oklch(0.42 0.11 318);
+        --green: oklch(0.61 0.12 143);
+        --white: oklch(0.995 0.008 83);
+        --shadow: 0 24px 80px oklch(0.22 0.036 246 / 0.14);
+        --radius: 8px;
+        font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          linear-gradient(90deg, oklch(0.8 0.04 83 / 0.18) 1px, transparent 1px) 0 0 / 32px 32px,
+          linear-gradient(0deg, oklch(0.8 0.04 83 / 0.18) 1px, transparent 1px) 0 0 / 32px 32px,
+          var(--paper);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-bottom: 1px solid color-mix(in oklch, var(--line), transparent 22%);
+        background: color-mix(in oklch, var(--paper), transparent 8%);
+        backdrop-filter: blur(18px);
+      }
+
+      .topbar .shell {
+        min-height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+
+      .mark {
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        color: var(--paper);
+        background: var(--ink);
+        border-radius: 50%;
+        box-shadow: inset 0 -7px 0 oklch(0.05 0.02 246 / 0.28);
+      }
+
+      .mark svg {
+        width: 21px;
+        height: 21px;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.9rem;
+      }
+
+      nav a {
+        padding: 10px 11px;
+        text-decoration: none;
+        border-radius: 999px;
+      }
+
+      nav a:hover,
+      nav a:focus-visible {
+        color: var(--ink);
+        background: var(--paper-strong);
+        outline: none;
+      }
+
+      .hero {
+        min-height: min(820px, calc(100vh - 68px));
+        display: grid;
+        align-items: start;
+        padding: clamp(36px, 6vw, 82px) 0 clamp(34px, 5vw, 66px);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+        gap: clamp(34px, 6vw, 86px);
+        align-items: center;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        margin: 0 0 18px;
+        padding: 7px 10px 6px;
+        border: 1px solid var(--ink);
+        background: var(--amber);
+        color: var(--ink);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: 760px;
+        margin-bottom: 18px;
+        font-size: clamp(3.05rem, 7vw, 6rem);
+        line-height: 0.9;
+        letter-spacing: 0;
+      }
+
+      h2 {
+        margin-bottom: 18px;
+        font-size: clamp(2rem, 4.3vw, 4.8rem);
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: clamp(1.2rem, 2vw, 1.85rem);
+        line-height: 1.08;
+      }
+
+      p,
+      li {
+        color: color-mix(in oklch, var(--ink), var(--muted) 26%);
+        font-size: 1.05rem;
+        line-height: 1.55;
+      }
+
+      .lead {
+        max-width: 790px;
+        font-size: clamp(1.18rem, 1.8vw, 1.48rem);
+        line-height: 1.28;
+        color: var(--ink);
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .button {
+        display: inline-flex;
+        min-height: 40px;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 9px 15px;
+        border: 1px solid var(--ink);
+        border-radius: 999px;
+        background: var(--ink);
+        color: var(--paper);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 4px 4px 0 var(--orange);
+        transition: transform 160ms ease, box-shadow 160ms ease;
+      }
+
+      .button:hover,
+      .button:focus-visible {
+        transform: translate(-2px, -2px);
+        box-shadow: 7px 7px 0 var(--orange);
+        outline: none;
+      }
+
+      .button.secondary {
+        background: var(--paper);
+        color: var(--ink);
+        box-shadow: none;
+      }
+
+      .button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .briefing {
+        position: relative;
+        isolation: isolate;
+        padding: clamp(22px, 3vw, 32px);
+        border: 1px solid var(--ink);
+        background: var(--white);
+        box-shadow: var(--shadow);
+      }
+
+      .briefing::before {
+        content: "";
+        position: absolute;
+        inset: 15px -15px -15px 15px;
+        z-index: -1;
+        border: 1px solid var(--ink);
+        background: var(--teal);
+      }
+
+      .briefing-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 28px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--line);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-weight: 800;
+      }
+
+      .meter {
+        display: grid;
+        gap: 14px;
+        margin: 24px 0;
+      }
+
+      .meter-row {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .bar {
+        height: 13px;
+        border: 1px solid var(--ink);
+        background: var(--paper-strong);
+        overflow: hidden;
+      }
+
+      .fill {
+        height: 100%;
+        background: var(--orange);
+      }
+
+      .fill.teal {
+        background: var(--teal);
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+      }
+
+      .stat {
+        padding: 18px;
+        background: var(--paper);
+      }
+
+      .stat b {
+        display: block;
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
+        line-height: 0.95;
+      }
+
+      .stat span {
+        display: block;
+        margin-top: 7px;
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.82rem;
+        line-height: 1.25;
+      }
+
+      section {
+        padding: clamp(64px, 10vw, 132px) 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(280px, 0.52fr);
+        gap: clamp(24px, 5vw, 70px);
+        align-items: end;
+        margin-bottom: clamp(28px, 6vw, 70px);
+      }
+
+      .section-head p {
+        margin-bottom: 0;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1fr);
+        gap: clamp(28px, 5vw, 72px);
+        align-items: start;
+      }
+
+      .text-stack > * + * {
+        margin-top: 18px;
+      }
+
+      .callout {
+        padding: clamp(22px, 3vw, 34px);
+        border: 1px solid var(--ink);
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .callout p,
+      .callout li {
+        color: color-mix(in oklch, var(--paper), var(--amber) 15%);
+      }
+
+      .callout h3 {
+        color: var(--paper);
+      }
+
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(180px, 1fr));
+        gap: 1px;
+        overflow-x: auto;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+      }
+
+      .rule {
+        min-width: 184px;
+        padding: 20px;
+        background: var(--white);
+      }
+
+      .rule strong {
+        display: block;
+        margin-bottom: 34px;
+        color: var(--orange);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.95rem;
+      }
+
+      .rule p {
+        margin-bottom: 0;
+        font-size: 0.98rem;
+      }
+
+      .stages {
+        display: grid;
+        gap: 1px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+      }
+
+      .stage {
+        display: grid;
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 1px;
+        background: var(--ink);
+      }
+
+      .stage > * {
+        padding: clamp(18px, 3vw, 28px);
+        background: var(--white);
+      }
+
+      .stage h3 {
+        margin: 0;
+      }
+
+      .stage time {
+        display: block;
+        margin-top: 10px;
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.86rem;
+        text-transform: uppercase;
+      }
+
+      .formula {
+        padding: clamp(22px, 3vw, 34px);
+        border: 1px solid var(--ink);
+        background: var(--paper-strong);
+      }
+
+      .formula code {
+        display: block;
+        overflow-x: auto;
+        color: var(--ink);
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: clamp(0.85rem, 1.4vw, 1rem);
+        line-height: 1.7;
+        white-space: pre;
+      }
+
+      .calculator {
+        display: grid;
+        grid-template-columns: minmax(280px, 0.88fr) minmax(320px, 1fr);
+        gap: 1px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+      }
+
+      .panel {
+        padding: clamp(22px, 3vw, 34px);
+        background: var(--white);
+      }
+
+      .field {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 22px;
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+      }
+
+      label {
+        font-weight: 800;
+      }
+
+      select,
+      input[type="range"] {
+        width: 100%;
+      }
+
+      select {
+        min-height: 44px;
+        padding: 8px 10px;
+        border: 1px solid var(--ink);
+        border-radius: 0;
+        background: var(--paper);
+        color: var(--ink);
+      }
+
+      input[type="range"] {
+        accent-color: var(--orange);
+      }
+
+      .output-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1px;
+        border: 1px solid var(--ink);
+        background: var(--ink);
+      }
+
+      .output {
+        min-height: 142px;
+        padding: 20px;
+        background: var(--paper);
+      }
+
+      .output span {
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.83rem;
+        text-transform: uppercase;
+      }
+
+      .output strong {
+        display: block;
+        margin: 10px 0 4px;
+        font-size: clamp(2rem, 5vw, 4.2rem);
+        line-height: 0.9;
+      }
+
+      .phase-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
+
+      .phase {
+        position: relative;
+        min-height: 360px;
+        padding: 24px;
+        border: 1px solid var(--ink);
+        background: var(--white);
+      }
+
+      .phase::after {
+        content: "";
+        position: absolute;
+        right: 18px;
+        bottom: 18px;
+        width: 52px;
+        height: 52px;
+        border: 1px solid var(--ink);
+        background: var(--accent, var(--orange));
+      }
+
+      .phase small {
+        display: block;
+        margin-bottom: 20px;
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .phase dl {
+        display: grid;
+        gap: 14px;
+        margin: 24px 0 0;
+      }
+
+      .phase div {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+      }
+
+      .phase dt {
+        color: var(--muted);
+      }
+
+      .phase dd {
+        margin: 0;
+        font-weight: 800;
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--ink);
+        background: var(--white);
+      }
+
+      table {
+        width: 100%;
+        min-width: 850px;
+        border-collapse: collapse;
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+      }
+
+      th,
+      td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--line);
+        text-align: right;
+        vertical-align: top;
+        white-space: nowrap;
+      }
+
+      th:first-child,
+      td:first-child {
+        text-align: left;
+      }
+
+      th {
+        background: var(--ink);
+        color: var(--paper);
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      tbody tr:nth-child(even) td {
+        background: color-mix(in oklch, var(--paper-strong), white 38%);
+      }
+
+      .evidence {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+        gap: 24px;
+        align-items: start;
+      }
+
+      figure {
+        margin: 0;
+        border: 1px solid var(--ink);
+        background: var(--white);
+      }
+
+      figure img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      figcaption {
+        padding: 12px 14px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+        font-size: 0.85rem;
+      }
+
+      .checks {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .check {
+        padding: 24px;
+        border: 1px solid var(--ink);
+        background: var(--white);
+      }
+
+      .check h3 {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .dot {
+        flex: 0 0 auto;
+        width: 18px;
+        height: 18px;
+        border: 1px solid var(--ink);
+        border-radius: 50%;
+        background: var(--accent, var(--orange));
+      }
+
+      footer {
+        padding: 40px 0;
+        color: var(--muted);
+        font-family: Optima, Candara, "Gill Sans", sans-serif;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .section-head,
+        .split,
+        .calculator,
+        .evidence {
+          grid-template-columns: 1fr;
+        }
+
+        nav {
+          display: none;
+        }
+
+        .phase-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .briefing::before {
+          inset: 10px -10px -10px 10px;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 1180px);
+        }
+
+        .hero {
+          min-height: auto;
+        }
+
+        .stage {
+          grid-template-columns: 1fr;
+        }
+
+        .stat-grid,
+        .output-grid,
+        .checks {
+          grid-template-columns: 1fr;
+        }
+
+        .meter-row {
+          grid-template-columns: 84px 1fr 48px;
+        }
+
+        .briefing,
+        .panel,
+        .phase,
+        .check,
+        .callout,
+        .formula {
+          padding: 18px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="shell">
+        <a class="brand" href="#top" aria-label="MINA Decentralized Treasury App">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M5 18V6h3.2l3.8 6.5L15.8 6H19v12h-3.1V11.4L12 18l-3.9-6.6V18H5Z" fill="currentColor"/>
+            </svg>
+          </span>
+          <span>MINA DT App</span>
+        </a>
+        <nav aria-label="Page navigation">
+          <a href="#concept">Concept</a>
+          <a href="#lifecycle">Lifecycle</a>
+          <a href="#thresholds">Thresholds</a>
+          <a href="#deployment">Deployment</a>
+          <a href="#safeguards">Safeguards</a>
+          <a href="#next">Next steps</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="shell hero-grid">
+          <div>
+            <p class="eyebrow">Candidate parameters for community discussion</p>
+            <h1 id="hero-title">A treasury app MINA can gradually take over.</h1>
+            <p class="lead">
+              The Decentralized Treasury App is a Mina-native ZKApp that lets the community submit, vote on, and execute treasury proposals while the system ramps from guarded test deployment to full community stewardship.
+            </p>
+            <div class="hero-actions">
+              <a class="button" href="#calculator">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M4 19h16M7 16V9m5 7V5m5 11v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Estimate proposal thresholds
+              </a>
+              <a class="button secondary" href="MINADAOTreasuryCandidateProposal.html">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 3h7l4 4v14H7V3Z" stroke="currentColor" stroke-width="2"/>
+                  <path d="M14 3v5h5M9 13h6M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Original export
+              </a>
+            </div>
+          </div>
+          <aside class="briefing" aria-label="Treasury summary">
+            <div class="briefing-title">
+              <span>Deployment dossier</span>
+              <span>Draft</span>
+            </div>
+            <div class="stat-grid" aria-label="Key numbers">
+              <div class="stat">
+                <b>55M</b>
+                <span>Total deployable MINA across candidate phases</span>
+              </div>
+              <div class="stat">
+                <b>4</b>
+                <span>Epoch proposal lifecycle after pre-discussion</span>
+              </div>
+              <div class="stat">
+                <b>3/5</b>
+                <span>Break-glass signer threshold for emergency veto</span>
+              </div>
+            </div>
+            <div class="meter" aria-label="Final deployment threshold scale">
+              <div class="meter-row">
+                <span>Small ask</span>
+                <div class="bar"><div class="fill" style="width: 40%"></div></div>
+                <span>9.0%</span>
+              </div>
+              <div class="meter-row">
+                <span>Large ask</span>
+                <div class="bar"><div class="fill teal" style="width: 100%"></div></div>
+                <span>22.5%</span>
+              </div>
+            </div>
+            <p>
+              Participation scales with the size of the request. Early deployments keep the bar low enough for real proposals to pass; later deployments raise the cost of capture.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="concept" aria-labelledby="concept-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Concept</p>
+            <h2 id="concept-title">Community control, without putting the whole treasury at risk on day one.</h2>
+          </div>
+          <p>
+            Mina does not natively support delegated voting like an EVM governor. The DT App solves that with a Mina-native ZKApp for proposal lifecycle, adaptive quorum, vote tallying, and treasury disbursement.
+          </p>
+        </div>
+        <div class="shell split">
+          <div class="text-stack">
+            <h3>The design problem</h3>
+            <p>
+              Three failure modes shape the proposal: thresholds can be too high and brick the treasury, too low and invite governance attacks, or the ZKApp can fall out of sync with chain state.
+            </p>
+            <p>
+              The candidate approach starts small, gathers real participation data, and redeploys with larger treasury slices and stronger thresholds as community activity proves itself.
+            </p>
+          </div>
+          <div class="callout">
+            <h3>What proposal makers should internalize</h3>
+            <ul>
+              <li>Your requested amount changes the voting burden.</li>
+              <li>Abstain counts toward participation, not approval.</li>
+              <li>The bond is 10% of the proposal and burns if the proposal fails.</li>
+              <li>Early phases are intentionally easier, but guarded by break glass.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="lifecycle" aria-labelledby="lifecycle-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Proposal lifecycle</p>
+            <h2 id="lifecycle-title">Four on-chain epochs after pre-proposal discussion.</h2>
+          </div>
+          <p>
+            The report originally recommended variable lifecycle lengths. The DT App candidate simplifies this: submission, exploration, voting, and cooldown are each one Mina epoch, roughly one week after the MESA update.
+          </p>
+        </div>
+        <div class="shell stages">
+          <article class="stage">
+            <div>
+              <h3>Pre-proposal discussion</h3>
+              <time>Before formal submission</time>
+            </div>
+            <div>
+              <p>Community contributors explore, refine, and gather early sentiment before any formal lifecycle starts.</p>
+            </div>
+          </article>
+          <article class="stage">
+            <div>
+              <h3>Submission</h3>
+              <time>1 epoch</time>
+            </div>
+            <div>
+              <p>A formal proposal starts. The snapshot is taken at N-2; by the third day, changes require restarting the governance lifecycle with a new proposal.</p>
+            </div>
+          </article>
+          <article class="stage">
+            <div>
+              <h3>Exploration</h3>
+              <time>1 epoch</time>
+            </div>
+            <div>
+              <p>Optional KYC/KYB checks happen where required, and proposers refine based on feedback before voting locks.</p>
+            </div>
+          </article>
+          <article class="stage">
+            <div>
+              <h3>Voting</h3>
+              <time>1 epoch</time>
+            </div>
+            <div>
+              <p>Stakeholders formally vote. Votes are measured as yay, nay, and abstain, with abstain included only in participation.</p>
+            </div>
+          </article>
+          <article class="stage">
+            <div>
+              <h3>Cooldown</h3>
+              <time>1 epoch base case</time>
+            </div>
+            <div>
+              <p>Large stakeholders have time to exit stake or hedge. Requests above 5% of the treasury automatically double cooldown for additional scrutiny.</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="thresholds" aria-labelledby="threshold-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Adaptive thresholds</p>
+            <h2 id="threshold-title">The bigger the ask, the more participation and approval it needs.</h2>
+          </div>
+          <p>
+            Thresholds follow a simple S-curve. They rise from 20% to 50% participation and 51% to 70% approval before each deployment modifier scales those values to the current phase.
+          </p>
+        </div>
+        <div class="shell split">
+          <div class="formula" aria-label="Approval formula">
+            <code>Approved iff:
+(Y + N + A0 >= RequiredParticipation)
+AND (Y + N > 0)
+AND (Y / (Y + N) >= RequiredApproval)
+
+Y  = yay voting weight
+N  = nay voting weight
+A0 = abstain voting weight</code>
+          </div>
+          <figure>
+            <img src="images/image3.png" alt="S-curve showing quorum required increasing as proposal size increases">
+            <figcaption>Proposal size maps to threshold intensity with an S-curve rather than a flat requirement.</figcaption>
+          </figure>
+        </div>
+
+        <div class="shell" id="calculator" style="margin-top: clamp(26px, 5vw, 58px);">
+          <div class="calculator" aria-label="Proposal threshold estimator">
+            <div class="panel">
+              <h3>Threshold estimator</h3>
+              <p>Choose a deployment phase and proposal size as a percentage of that phase treasury.</p>
+              <div class="field">
+                <label for="phase">Deployment phase</label>
+                <select id="phase">
+                  <option value="test">Test Phase - 1M MINA</option>
+                  <option value="scale">Scale Up Phase - 20M MINA</option>
+                  <option value="final">Final Deployment - 34M MINA</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="ask">Proposal request: <span id="askLabel">10%</span> of phase treasury</label>
+                <input id="ask" type="range" min="1" max="100" value="10">
+              </div>
+            </div>
+            <div class="panel">
+              <div class="output-grid">
+                <div class="output">
+                  <span>Participation required</span>
+                  <strong id="participationOut">11.39%</strong>
+                  <p id="participationMina">146,779k MINA voting weight</p>
+                </div>
+                <div class="output">
+                  <span>Approval ratio</span>
+                  <strong id="approvalOut">60.99%</strong>
+                  <p id="approvalMina">Minimum yay at participation floor</p>
+                </div>
+              </div>
+              <p id="askOut" style="margin: 18px 0 0;">Estimated ask: 2,000k MINA from the selected treasury.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="deployment" aria-labelledby="deployment-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Treasury cadence</p>
+            <h2 id="deployment-title">Three deployments move from guarded testing to final decentralization.</h2>
+          </div>
+          <p>
+            The candidate cadence deploys about 55M MINA in total, calculated in the source report as about USD 2.8M using a 14-day MINA price average as of 2026-05-28.
+          </p>
+        </div>
+        <div class="shell phase-grid">
+          <article class="phase" style="--accent: var(--teal);">
+            <small>Phase 01</small>
+            <h3>Test Phase</h3>
+            <p>Real-world data, low thresholds, and a meaningful start without putting too much at risk.</p>
+            <dl>
+              <div><dt>Treasury</dt><dd>1M MINA</dd></div>
+              <div><dt>Pmin -> Pmax</dt><dd>1.0% -> 2.5%</dd></div>
+              <div><dt>Amin -> Amax</dt><dd>0.5% -> 1.75%</dd></div>
+            </dl>
+          </article>
+          <article class="phase" style="--accent: var(--amber);">
+            <small>Phase 02</small>
+            <h3>Scale Up Phase</h3>
+            <p>About USD 1M worth of MINA, still guarded, with thresholds high enough to require broader activation.</p>
+            <dl>
+              <div><dt>Treasury</dt><dd>20M MINA</dd></div>
+              <div><dt>Pmin -> Pmax</dt><dd>5.6% -> 14.0%</dd></div>
+              <div><dt>Amin -> Amax</dt><dd>2.8% -> 9.8%</dd></div>
+            </dl>
+          </article>
+          <article class="phase" style="--accent: var(--orange);">
+            <small>Phase 03</small>
+            <h3>Final Deployment</h3>
+            <p>The signer authority is relinquished; after successful cadence, break-glass keys are sent to a burn address.</p>
+            <dl>
+              <div><dt>Treasury</dt><dd>34M MINA</dd></div>
+              <div><dt>Pmin -> Pmax</dt><dd>9.0% -> 22.5%</dd></div>
+              <div><dt>Amin -> Amax</dt><dd>4.5% -> 15.75%</dd></div>
+            </dl>
+          </article>
+        </div>
+        <div class="shell table-wrap" style="margin-top: 26px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Deployment</th>
+                <th>Treasury k MINA</th>
+                <th>Pmax / T</th>
+                <th>Modifier</th>
+                <th>Pmin supply</th>
+                <th>Pmax supply</th>
+                <th>Amin supply</th>
+                <th>Amax supply</th>
+                <th>Treasury k USD</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Test Phase</td>
+                <td>1,000.00</td>
+                <td>32.21x</td>
+                <td>5.00%</td>
+                <td>1.00%</td>
+                <td>2.50%</td>
+                <td>0.50%</td>
+                <td>1.75%</td>
+                <td>51.18</td>
+              </tr>
+              <tr>
+                <td>Scale Up Phase</td>
+                <td>20,000.00</td>
+                <td>9.02x</td>
+                <td>28.00%</td>
+                <td>5.60%</td>
+                <td>14.00%</td>
+                <td>2.80%</td>
+                <td>9.80%</td>
+                <td>1,023.55</td>
+              </tr>
+              <tr>
+                <td>Final Deployment</td>
+                <td>34,000.00</td>
+                <td>8.53x</td>
+                <td>45.00%</td>
+                <td>9.00%</td>
+                <td>22.50%</td>
+                <td>4.50%</td>
+                <td>15.75%</td>
+                <td>1,740.03</td>
+              </tr>
+              <tr>
+                <td>Total deployed</td>
+                <td>55,000.00</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>2,814.75</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="shell evidence" style="margin-top: 26px;">
+          <figure>
+            <img src="images/image5.png" alt="Deployment flow from test phase to scale up phase to final deployment">
+            <figcaption>Movement between deployments is triggered by treasury spend, successful proposal cadence, or elapsed time.</figcaption>
+          </figure>
+          <div class="callout">
+            <h3>Phase transition rules</h3>
+            <ul>
+              <li>Test to Scale Up: treasury spent, two consecutive proposals pass, or two months elapse.</li>
+              <li>Scale Up to Final: treasury spent, four consecutive proposals pass, or three months elapse.</li>
+              <li>Unused Test treasury is drained and redeployed into Scale Up when the phase ends.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="safeguards" aria-labelledby="safeguards-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Safeguards</p>
+            <h2 id="safeguards-title">Break glass is a transitional security gate, not a second legislature.</h2>
+          </div>
+          <p>
+            Five signers can veto, halt, or cancel proposals in emergencies when three signers submit a signed proof to the ZKApp. The proposed initial composition is three Mina Foundation signers, one o(1) Labs signer, and one Aragon X signer.
+          </p>
+        </div>
+        <div class="shell rules">
+          <article class="rule">
+            <strong>01</strong>
+            <h3>Funds at risk</h3>
+            <p>Clear threat that DT funds will be stolen, frozen, or materially impaired before execution.</p>
+          </article>
+          <article class="rule">
+            <strong>02</strong>
+            <h3>Capture</h3>
+            <p>Malicious vote coordination, bribery, or unusually narrow outcomes that compromise the decision process.</p>
+          </article>
+          <article class="rule">
+            <strong>03</strong>
+            <h3>Attacker benefit</h3>
+            <p>One-sided value extraction with no plausible pro-protocol rationale.</p>
+          </article>
+          <article class="rule">
+            <strong>04</strong>
+            <h3>Security incident</h3>
+            <p>Critical DT App vulnerabilities, active exploitation, or infrastructure attacks that make operation unsafe.</p>
+          </article>
+          <article class="rule">
+            <strong>05</strong>
+            <h3>Irregular proposal</h3>
+            <p>Malformed payloads, description-payload mismatch, or broken process norms that could cause unintended effects.</p>
+          </article>
+        </div>
+        <div class="shell checks" style="margin-top: 26px;">
+          <article class="check">
+            <h3><span class="dot" style="--accent: var(--green);"></span>Default stance</h3>
+            <p>Non-intervention. Policy disagreement, taste, ideology, and feasibility concerns are for token holders, not the break-glass signers.</p>
+          </article>
+          <article class="check">
+            <h3><span class="dot" style="--accent: var(--plum);"></span>Sunset path</h3>
+            <p>The break glass is removed once community activity reaches sufficient quorum to safeguard funds, with keys sent to a burn address.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="validators" aria-labelledby="validators-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Governance reality</p>
+            <h2 id="validators-title">Large validators can move outcomes; thresholds must account for that.</h2>
+          </div>
+          <p>
+            The top 10 validators account for 32.95% of voting power in the source report. Kraken alone accounts for 14.9%, though exchanges are assumed unlikely to vote because of compliance constraints.
+          </p>
+        </div>
+        <div class="shell evidence">
+          <figure>
+            <img src="images/image2.png" alt="Log-scale account balance chart showing highly concentrated account balances">
+            <figcaption>Top accounts decline sharply on a log scale, making activation and capture resistance central design concerns.</figcaption>
+          </figure>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Validator</th>
+                  <th>Staked MINA</th>
+                  <th>Voting power</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Kraken</td><td>192,052,586</td><td>14.90%</td></tr>
+                <tr><td>MINAExplorer</td><td>73,548,574</td><td>5.71%</td></tr>
+                <tr><td>AuroWallet</td><td>59,194,232</td><td>4.59%</td></tr>
+                <tr><td>Unlabeled</td><td>39,169,385</td><td>3.04%</td></tr>
+                <tr><td>Carbonara</td><td>15,470,046</td><td>1.20%</td></tr>
+                <tr><td>InfStones</td><td>13,495,855</td><td>1.05%</td></tr>
+                <tr><td>PiconBello</td><td>12,522,562</td><td>0.97%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="operations" aria-labelledby="operations-title">
+        <div class="shell section-head">
+          <div>
+            <p class="eyebrow">Operations</p>
+            <h2 id="operations-title">The app depends on competent hosting, archive data, and proof workers.</h2>
+          </div>
+          <p>
+            Aragon is proposed to operate the full application and its dependencies for the first 24 months. Over time, the community should select and fund the operational entities.
+          </p>
+        </div>
+        <div class="shell checks">
+          <article class="check">
+            <h3><span class="dot" style="--accent: var(--teal);"></span>Infrastructure scope</h3>
+            <p>Frontend hosting, security updates, UX improvements, archive node DevOps, and workers that keep the ZKApp in sync with chain state.</p>
+          </article>
+          <article class="check">
+            <h3><span class="dot" style="--accent: var(--orange);"></span>Resource assumptions</h3>
+            <p>DevOps is estimated around 40 hours per month. Workers need at least 16 vCPU and 64 GB RAM for monthly tallying and verification windows.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="next" aria-labelledby="next-title">
+        <div class="shell split">
+          <div>
+            <p class="eyebrow">Next steps</p>
+            <h2 id="next-title">The open questions are governance choices, not just parameters.</h2>
+          </div>
+          <div class="callout">
+            <h3>Discussion points</h3>
+            <ul>
+              <li>Break-glass roles and escalation path.</li>
+              <li>When and how break glass should be removed.</li>
+              <li>Treasury deployment cadence.</li>
+              <li>Voting thresholds and phase modifiers.</li>
+            </ul>
+            <p>
+              The source proposal frames this as a starting point for deliberation before a final deployment proposal.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        <p>Built from the local Google Docs HTML export. Data points reflect the source report and should be updated before final publication.</p>
+      </div>
+    </footer>
+
+    <script>
+      const phases = {
+        test: { treasuryK: 1000, modifier: 0.05 },
+        scale: { treasuryK: 20000, modifier: 0.28 },
+        final: { treasuryK: 34000, modifier: 0.45 }
+      };
+
+      const circulatingK = 1288500;
+      const ask = document.querySelector("#ask");
+      const phase = document.querySelector("#phase");
+      const askLabel = document.querySelector("#askLabel");
+      const participationOut = document.querySelector("#participationOut");
+      const approvalOut = document.querySelector("#approvalOut");
+      const participationMina = document.querySelector("#participationMina");
+      const approvalMina = document.querySelector("#approvalMina");
+      const askOut = document.querySelector("#askOut");
+
+      function curve(x, c) {
+        return x / (x + c * (1 - x));
+      }
+
+      function formatK(value) {
+        return Math.round(value).toLocaleString("en-US") + "k MINA";
+      }
+
+      function updateCalculator() {
+        const selected = phases[phase.value];
+        const askPercent = Number(ask.value);
+        const x = Math.min(askPercent / 100, 1);
+        const participationBp = 2000 + (5000 - 2000) * curve(x, 0.05);
+        const approvalBp = 5100 + (7000 - 5100) * curve(x, 0.10);
+        const participationSupplyPct = selected.modifier * participationBp / 100;
+        const approvalRatioPct = approvalBp / 100;
+        const participationK = circulatingK * participationSupplyPct / 100;
+        const approvalK = participationK * approvalRatioPct / 100;
+        const askK = selected.treasuryK * askPercent / 100;
+
+        askLabel.textContent = askPercent + "%";
+        participationOut.textContent = participationSupplyPct.toFixed(2) + "%";
+        approvalOut.textContent = approvalRatioPct.toFixed(2) + "%";
+        participationMina.textContent = formatK(participationK) + " voting weight";
+        approvalMina.textContent = formatK(approvalK) + " minimum yay at participation floor";
+        askOut.textContent = "Estimated ask: " + formatK(askK) + " from the selected treasury.";
+      }
+
+      ask.addEventListener("input", updateCalculator);
+      phase.addEventListener("change", updateCalculator);
+      updateCalculator();
+    </script>
+  </body>
+</html>
