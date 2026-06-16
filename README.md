@@ -84,9 +84,12 @@ context. Both are consumed by [Impeccable](https://impeccable.style/).
 
 ## Deployment
 
-Currently a local static build (`dist/`). When hosted on a subdomain root
-(e.g. `https://dthq.minafoundation.com`), set `site` in `astro.config.mjs` for canonical
-URLs, sitemap, and OG tags — no `base` path needed.
+Deployed on **Vercel** via its Git integration (no GitHub Actions): `main` → Production,
+every branch/PR → a Preview deployment. `vercel.json` pins the framework, `pnpm build` →
+`dist/`, and `pnpm install --frozen-lockfile`.
+
+When moving to a custom subdomain root (e.g. `https://dthq.minafoundation.com`), set `site`
+in `astro.config.mjs` for canonical URLs, sitemap, and OG tags — no `base` path needed.
 
 ## Supply-chain hardening (pnpm)
 

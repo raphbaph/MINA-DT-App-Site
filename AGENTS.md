@@ -32,13 +32,15 @@ src/
   content.config.ts        # `updates` collection (glob loader)
   content/updates/*.mdx     # one file per update/proposal ← drop new ones here
   layouts/BaseLayout.astro  # html shell, fonts, global styles
-  components/               # Header (glossy glass), Footer (dark), Hero,
-                            # ThresholdCalculator (island), InfoSection (dark card), Figure
+  components/               # Header (floating glossy glass), Footer (dark), Hero,
+                            # ThresholdCalculator (island), InfoSection (dark card), Figure,
+                            # TableWrap (scrollable table), and the four SVG charts:
+                            # SCurveChart, DeployFlowChart, LifecycleChart, BalanceChart
   pages/
     index.astro             # the educational primer (MAIN content)
     updates/index.astro     # forthcoming updates feed
     updates/[...slug].astro  # one page per update (slug from frontmatter or filename)
-  assets/                   # diagrams (optimized at build)
+  assets/                   # proposal-stages.png (only remaining raster; rest are SVG)
   styles/global.css         # Tailwind import + @theme tokens (mirror DESIGN.md) + glass/dark/doc
 public/                     # favicon, static files
 DESIGN.md  PRODUCT.md       # design + product source of truth
@@ -94,10 +96,11 @@ source-document voice) are recorded in `.impeccable/config.json` via `impeccable
 with a `--reason` — never silently. Aim for a clean audit or documented ignores only.
 
 ## Backlog / future
-- **Redraw the remaining diagrams as SVG.** The S-curve is done (`SCurveChart.astro`). Three
-  raster exports remain in `src/assets/`: `lifecycle-epochs.png`, `deployment-flow.png`, and
-  `balance-distribution.png` (the last has clashing gridlines). Native SVG is crisp, brand-
-  recolorable, and themeable — do these before launch polish.
+- **Last raster → SVG.** All four data diagrams are now native SVG components. Only
+  `proposal-stages.png` (the proposal stage-descriptions table) remains a raster, used via
+  `Figure` in `proposal-v1.mdx` — optionally redraw as an HTML table or SVG before launch.
+- Confirm the X/Twitter handle in `Header.astro` (placeholder); sort out **Feijoa Display**
+  licensing (serif fallback until then).
 
 ## Conventions / gotchas
 - **Don't reintroduce a pure-white background** or flat/matte glass — see DESIGN.md.
@@ -109,6 +112,8 @@ with a `--reason` — never silently. Aim for a clean audit or documented ignore
 - **Glass blur:** apply `backdrop-filter` via Tailwind `backdrop-blur-*` utilities, not a
   custom CSS property — Lightning CSS strips the unprefixed `backdrop-filter` from hand-written
   rules (leaving `-webkit-` only, so Firefox gets no blur). The header uses `backdrop-blur-[40px]`.
-- Hosting is deferred (local `dist/`). For a subdomain root (e.g.
-  `dthq.minafoundation.com`), set `site` in `astro.config.mjs` — no `base` needed.
-- Confirm the X/Twitter handle in `Header.astro` before launch (currently a placeholder).
+- **Deployment:** the repo is connected to **Vercel** (Git integration — no GitHub Actions).
+  `main` → Production, every branch/PR → Preview. `vercel.json` pins
+  `framework: astro`, `pnpm build` → `dist/`, and `pnpm install --frozen-lockfile`. For a
+  custom subdomain (e.g. `dthq.minafoundation.com`) set `site` in `astro.config.mjs` for
+  canonical/OG URLs — no `base` needed (served at the domain root).
