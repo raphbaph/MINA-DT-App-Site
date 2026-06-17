@@ -32,7 +32,7 @@ const failureModes = [
 ];
 
 const lifecycle = [
-  { t: "Submission", b: "A formal proposal starts. The snapshot is taken at N-2; by day three, changes mean restarting with a new proposal." },
+  { t: "Submission", b: "A formal proposal starts and its voting-power snapshot is fixed up front (at N-2); by day three, changes mean restarting with a new proposal." },
   { t: "Exploration", b: "Contributors refine and align. Optional KYC/KYB checks and feedback before vote locks." },
   { t: "Voting", b: "Stakeholders vote formally over one epoch. Adaptive participation and approval thresholds apply." },
   { t: "Cooldown", b: "A final exit window. Requests above 5% of the treasury automatically double cooldown for scrutiny." },
@@ -40,7 +40,7 @@ const lifecycle = [
 
 const phases = [
   { t: "Test Phase", amt: "1M MINA", b: "Low thresholds reachable by a single top validator, on purpose, to bootstrap activity. Break glass active; Foundation retains signer authority." },
-  { t: "Scale Up Phase", amt: "~20M MINA", b: "Participation ramps up so real validator turnout or top-100 accounts are needed. Real value for builders; break glass still active." },
+  { t: "Scale Up Phase", amt: "~20M MINA", b: "Participation ramps up so real validator turnout or top 100 accounts are needed. Real value for builders; break glass still active." },
   { t: "Final Deployment", amt: "~34M MINA", b: "Up to 34M MINA available. Signer authority is relinquished; once a cadence of successes is reached, the break-glass keys are burned." },
 ];
 
@@ -63,17 +63,17 @@ const criteria = [
   {/* ---------- Hero ---------- */}
   <Section class="pt-14 pb-10 md:pt-20">
     <span class="chip">MINA Decentralized Treasury</span>
-    <h1 class="mt-4 max-w-[16ch] font-display text-4xl md:text-6xl">
-      A treasury the community can gradually take over.
+    <h1 class="mt-4 max-w-[18ch] font-display text-4xl md:text-6xl">
+      Safely putting the community in charge of its treasury.
     </h1>
     <p class="mt-5 max-w-[60ch] text-lg text-ink-soft">
-      The DT App is a MINA-native ZK app that lets the community submit, vote on, and
-      execute treasury proposals while the system ramps from a guarded test deployment to
-      full community stewardship. This is a primer on how it works.
+      The DT App is a MINA-native ZKApp for submitting, voting on, and executing treasury
+      proposals — ramping from a guarded test phase to full community control. Here's how
+      it works.
     </p>
     <div class="mt-8 flex flex-col gap-3 md:flex-row md:flex-wrap">
       <PillButton href="#calculator" class="w-full justify-center md:w-auto">Try the threshold calculator</PillButton>
-      <PillButton href={proposalHref} variant="secondary" class="w-full justify-center md:w-auto">Read the full proposal</PillButton>
+      <PillButton href={proposalHref} variant="secondary" class="w-full justify-center md:w-auto">Read the candidate proposal</PillButton>
     </div>
 
     <dl class="mt-12 grid gap-4 sm:grid-cols-3">
@@ -105,7 +105,7 @@ const criteria = [
 
   {/* ---------- Lifecycle ---------- */}
   <Section id="lifecycle">
-    <SectionHeading eyebrow="Lifecycle" title="A four-week proposal lifecycle." headingClass="max-w-[18ch] text-3xl md:text-5xl">
+    <SectionHeading eyebrow="Lifecycle" title="Every round of proposals follows the same four stages." headingClass="max-w-[22ch] text-3xl md:text-5xl">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         The original report recommended variable lifecycle lengths. The DT App simplifies this:
         submission, exploration, voting, and cooldown are each one MINA epoch — roughly one week
@@ -122,7 +122,7 @@ const criteria = [
 
   {/* ---------- Thresholds + calculator ---------- */}
   <Section id="thresholds">
-    <SectionHeading eyebrow="Thresholds" title="Adaptive thresholds on an S-curve." headingClass="max-w-[18ch] text-3xl md:text-5xl">
+    <SectionHeading eyebrow="Thresholds" title="The bigger the ask, the higher the bar." headingClass="max-w-[18ch] text-3xl md:text-5xl">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         Participation scales with the size of the request. Thresholds rise from 20% to 50%
         participation and 51% to 70% approval, then a per-phase modifier scales those to the
@@ -131,17 +131,18 @@ const criteria = [
       </p>
     </SectionHeading>
     <div class="mt-8 grid items-start gap-6 lg:grid-cols-2">
-      <SCurveChart class="m-0" caption="Required quorum rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
+      <SCurveChart class="m-0" caption="Required quorum (the participation/approval bar) rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
       <ThresholdCalculator />
     </div>
   </Section>
 
   {/* ---------- Deployment ---------- */}
   <Section id="deployment">
-    <SectionHeading eyebrow="Deployment" title="Deployed in three guarded steps.">
+    <SectionHeading eyebrow="Deployment" title="From sandbox to full control, in three steps." headingClass="max-w-[20ch] text-3xl md:text-5xl">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-        Rather than expose the whole treasury at once, the DT App is deployed in rounds — moving
-        from guarded testing to final decentralization as the community proves itself.
+        Rather than expose the whole treasury at once, the DT App is deployed in phases — each
+        phase an era of many proposal rounds — moving from guarded testing to final
+        decentralization as the community proves itself.
       </p>
     </SectionHeading>
     <div class="mt-6 grid gap-4 md:grid-cols-3">
@@ -200,7 +201,7 @@ const criteria = [
       <div>
         <p class="max-w-[58ch] text-lg text-ink-soft">
           The top 10 validators hold ~32.95% of voting power (Kraken alone 14.9%). Exchanges
-          don't vote, so the votable validator share is ~18.05%. The top two accounts hold
+          don't vote, so the votable validator share is ~18.05%. The top 2 accounts hold
           ~15% each but rarely transact. Thresholds are tuned so top accounts can still move
           the needle, while attacks remain costlier than the maximum extractable — and the
           break glass guards the early phases.
@@ -216,14 +217,14 @@ const criteria = [
 
   {/* ---------- Next steps ---------- */}
   <Section id="next">
-    <SectionHeading eyebrow="Next steps" title="A starting point for discussion.">
+    <SectionHeading eyebrow="Next steps" title="Nothing here is final — that's the point.">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         This is a candidate proposal, open for community input — most importantly on break-glass
-        roles and escalation, when to remove the break glass, the deployment cadence, and the
-        voting thresholds.
+        roles and escalation, its removal timing, the deployment cadence, and the voting
+        thresholds.
       </p>
     </SectionHeading>
-    <PillButton href={proposalHref} class="mt-6">Read the full proposal</PillButton>
+    <PillButton href={proposalHref} class="mt-6">Read the candidate proposal</PillButton>
   </Section>
 
   {/* ---------- Updates (forthcoming) ---------- */}
