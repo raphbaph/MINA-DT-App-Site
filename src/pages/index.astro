@@ -140,9 +140,11 @@ const criteria = [
       current deployment. Early phases keep the bar low enough for real proposals to pass;
       later phases raise the cost of capture.
     </p>
-    <SCurveChart caption="Required quorum rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
+    <div class="mt-8 grid items-start gap-6 lg:grid-cols-2">
+      <SCurveChart class="m-0" caption="Required quorum rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
+      <ThresholdCalculator />
+    </div>
   </section>
-  <ThresholdCalculator />
 
   {/* ---------- Deployment ---------- */}
   <section id="deployment" class="mx-auto max-w-[1180px] px-5 py-14">
@@ -164,9 +166,9 @@ const criteria = [
         </div>
       ))}
     </div>
-    <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1.4fr_1fr]">
+    <div class="mt-6 grid items-stretch gap-6 lg:grid-cols-2">
       <DeployFlowChart class="m-0" caption="Movement is triggered by treasury spend, proposal cadence, or elapsed time." />
-      <div class="card-dark p-7">
+      <div class="card-dark flex flex-col justify-center p-7 md:p-9">
         <h3 class="font-display text-2xl">Phase transition rules</h3>
         <ul class="mt-4 space-y-3 text-sm">
           {transitionRules.map((r) => (

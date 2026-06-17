@@ -3,8 +3,7 @@
 // js/calculator.js — constants and formulas unchanged.
 ---
 
-<section id="calculator" class="mx-auto max-w-[1100px] px-5 py-10">
-  <div class="glass p-6 md:p-9">
+<div id="calculator" class="glass scroll-mt-28 p-6 md:p-9">
     <h2 class="font-display text-2xl md:text-3xl">Adaptive threshold calculator</h2>
     <p class="mt-2 max-w-[60ch] text-ink-soft">
       Pick a deployment phase and a proposal ask (as a share of that phase's
@@ -12,7 +11,7 @@
       figures behind them.
     </p>
 
-    <div class="mt-6 grid gap-6 md:grid-cols-2">
+    <div class="mt-6 space-y-5">
       <div>
         <label for="phase" class="mb-1 block font-medium">Deployment phase</label>
         <select
@@ -53,8 +52,7 @@
     </div>
 
     <p id="askOut" class="mt-5 font-mono text-sm text-ink" aria-live="polite"></p>
-  </div>
-</section>
+</div>
 
 <script>
   const phases = {
