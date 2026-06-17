@@ -22,3 +22,7 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# AI
+.agents
+.claude
