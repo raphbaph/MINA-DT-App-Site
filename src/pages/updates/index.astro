@@ -27,10 +27,7 @@ const fmt = (d: Date) =>
               href={`/updates/${entry.data.slug ?? entry.id}`}
               class="card-dark block p-6 no-underline"
             >
-              <p class="meta font-mono text-sm">
-                {fmt(entry.data.pubDate)}
-                {entry.data.version ? ` · ${entry.data.version}` : ""}
-              </p>
+              <p class="meta font-mono text-sm">{fmt(entry.data.pubDate)}</p>
               <h2 class="mt-1 font-display text-2xl">{entry.data.title}</h2>
               <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
             </a>

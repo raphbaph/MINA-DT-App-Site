@@ -17,20 +17,27 @@ const stages = ["Submission", "Exploration", "Voting", "Cooldown"];
   <div class="glass p-5 md:p-8">
     <div class="flex gap-3 overflow-x-auto sm:gap-4 sm:overflow-visible">
       {
-        stages.map((label) => (
-          <div class="w-[150px] shrink-0 sm:w-auto sm:flex-1">
-            <svg
-              viewBox="0 0 200 92"
-              role="img"
-              aria-label={`${label} — one epoch`}
-              class="w-full"
-              font-family="IBM Plex Sans, system-ui, sans-serif"
-            >
-              <path d="M2,10 L150,10 L196,46 L150,82 L2,82 Z" fill={fill} stroke={stroke} />
-              <text x="76" y="52" text-anchor="middle" font-size="18" fill={ink}>{label}</text>
-            </svg>
-          </div>
-        ))
+        stages.map((label, i) => {
+          const isLast = i === stages.length - 1;
+          // Terminal stage is a flat block (no forward arrowhead); the rest are arrows.
+          const shape = isLast
+            ? "M2,10 L196,10 L196,82 L2,82 Z"
+            : "M2,10 L150,10 L196,46 L150,82 L2,82 Z";
+          return (
+            <div class="w-[150px] shrink-0 sm:w-auto sm:flex-1">
+              <svg
+                viewBox="0 0 200 92"
+                role="img"
+                aria-label={`${label} — one epoch`}
+                class="w-full"
+                font-family="IBM Plex Sans, system-ui, sans-serif"
+              >
+                <path d={shape} fill={fill} stroke={stroke} />
+                <text x={isLast ? 99 : 76} y="52" text-anchor="middle" font-size="18" fill={ink}>{label}</text>
+              </svg>
+            </div>
+          );
+        })
       }
     </div>
   </div>
