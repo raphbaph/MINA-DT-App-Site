@@ -58,11 +58,11 @@ spacing:
   xl: "40px"
   "2xl": "64px"
   "3xl": "96px"
-rounded:
-  sm: "8px"
-  md: "16px"
-  lg: "40px"
-  full: "9999px"
+rounded:                                # low, crisp — institutional gravitas, NOT SaaS-bubbly
+  sm: "4px"                             # inputs, code, focus ring
+  md: "6px"                             # cards, glass, nav, dark cards, buttons, tables
+  lg: "10px"                            # occasional larger panels
+  full: "9999px"                        # circular elements only (slider thumb, social icons, dots)
 elevation:
   glass: "0 14px 44px rgb(45 45 45 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.85)"
   cardDark: "0 16px 44px rgb(20 24 28 / 0.22)"
@@ -70,7 +70,7 @@ components:
   button:                               # primary CTA — FLAT periwinkle, ink text
     backgroundColor: "#9A94E8"          # blue-violet, the complement to the amber chips
     textColor: "{colors.ink}"
-    rounded: "8px"                       # softly rounded, NOT a full pill
+    rounded: "{rounded.md}"              # crisp 6px — shares the card radius, NOT a pill
     padding: "{spacing.sm} {spacing.lg}"
     note: "flat color — no gloss, no emboss, no shadow"
   chip:                                 # section eyebrow tag — orangey-yellow rectangle
@@ -148,15 +148,17 @@ the bloomed background, with a saturation/brightness boost so it looks vibrant. 
 use `{elevation.cardDark}`. Borders + cool fills carry the rest.
 
 ## Shapes
-Softly rounded: `{rounded.md}` (16px) for cards, glass, calculator; **8px** for buttons and
-inputs/code; **3px** (a smidge) for the amber section chips; `{rounded.full}` (pill) for
-badges and the slider thumb; `{rounded.lg}` (40px) for occasional large feature panels. No
-decorative blobs — blooms + glass + rounding do the work.
+Low, crisp radii for **institutional gravitas — not SaaS-friendly bubbliness**:
+`{rounded.md}` (6px) for cards, glass, nav, dark cards, buttons, calculator, and tables;
+`{rounded.sm}` (4px) for inputs/code/focus; **3px** (a smidge) for the amber section chips.
+`{rounded.full}` is reserved for genuinely circular elements only (slider thumb, social
+icons, status dots) — never for cards or buttons. No decorative blobs; depth comes from the
+blooms, glossy glass, and dark cards, not from rounding.
 
 ## Components
-- **Button:** `components.button` — **flat periwinkle (blue-violet) fill with ink text**, 8px
-  radius (not a full pill), no gloss/emboss/shadow; chosen as the complement to the amber
-  chips. Visible focus ring. Secondary = translucent white pill-ish button with a line border.
+- **Button:** `components.button` — **flat periwinkle (blue-violet) fill with ink text**, a
+  crisp 6px radius (not a pill), no gloss/emboss/shadow; chosen as the complement to the amber
+  chips. Visible focus ring. Secondary = translucent white button with a line border.
 - **Section eyebrow chip:** `components.chip` — every section opens with the **orangey-yellow
   (amber) tag** (uppercase mono, near-square with a 3px smidge of radius), then the serif headline.
 - **Floating glass header:** `components.glassHeader` — a glossy, chunky glass bar that
@@ -186,8 +188,12 @@ decorative blobs — blooms + glass + rounding do the work.
 - **Do** use the accent violet sparingly; let the ultra-light lavender carry secondary tints.
 - **Do** pair a small mono eyebrow with a large serif headline per section.
 - **Do** use Feijoa Display for headings, IBM Plex Sans for prose, IBM Plex Mono for numbers.
+- **Do** keep radii low and crisp (6px cards/buttons/nav, 4px inputs) for institutional
+  gravitas; reserve `{rounded.full}` for genuinely circular elements only.
 - **Don't** use pure white as the page background, or saturated violet for large soft fills.
 - **Don't** make glass flat/matte — it should be glossy and vibrant.
+- **Don't** use large/bubbly corner radius or full-pill buttons (reads SaaS-friendly); keep
+  corners low and crisp for institutional gravitas.
 - **Don't** two-tone text within a single line/phrase (e.g. coloring one word in the wordmark
   lighter). Color hierarchy comes from **role** — heading vs body, `ink` vs `ink-soft` on
   *separate* elements — never from splitting one line into two colors.

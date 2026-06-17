@@ -49,6 +49,10 @@ understand the mechanism (and its tradeoffs and failure modes) before forming an
 not a hype page. Explains honestly (the three failure modes, break-glass limitations).
 Numbers and parameters are precise and sourced. The full formal proposal lives in `/updates`.
 
+The visual register reinforces this: **institutional gravitas over SaaS-friendliness** —
+clean, crisp, serious (low corner radii, restrained accents, document-first), the feel of a
+foundation treasury proposal, not a product marketing site. See DESIGN.md (Shapes, Do's/Don'ts).
+
 ## Key interactive feature
 The **threshold calculator**: given a deployment phase and a proposal ask (% of treasury),
 it computes required participation and approval (S-curve adaptive quorum) and the resulting
