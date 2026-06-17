@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+import logo from "../assets/mina-logo.png";
 const sections = [
   { href: "/#concept", label: "Concept" },
   { href: "/#lifecycle", label: "Lifecycle" },
@@ -10,10 +12,19 @@ const sections = [
 
 <div class="sticky top-3 z-40 px-3 md:top-4 md:px-5">
   <header class="glass-header mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-4 backdrop-blur-[40px] backdrop-saturate-150 md:px-7">
-    <a href="/" class="leading-tight no-underline">
-      <span class="eyebrow block">MINA Foundation</span>
-      <span class="block font-display text-lg text-ink md:text-xl">
-        Decentralized&nbsp;Treasury <span class="text-ink-soft">Updates</span>
+    <a href="/" class="flex items-center gap-3 no-underline">
+      <Image
+        src={logo}
+        alt="MINA Decentralized Treasury"
+        width={96}
+        height={96}
+        class="h-11 w-11 rounded-xl"
+      />
+      <span class="leading-tight">
+        <span class="eyebrow block">MINA Foundation</span>
+        <span class="block font-display text-lg text-ink md:text-xl">
+          Decentralized&nbsp;Treasury <span class="text-ink-soft">Updates</span>
+        </span>
       </span>
     </a>
 
