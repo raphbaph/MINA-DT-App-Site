@@ -26,12 +26,12 @@ const violet = "#8576c5";
         </marker>
       </defs>
 
-      <!-- Axes -->
-      <line x1="60" y1="300" x2="60" y2="24" stroke={ink} stroke-width="2" marker-end="url(#arrow)"></line>
+      <!-- Axes (y-axis split to leave a real gap for the non-zero-origin break — no white-out mask) -->
+      <line x1="60" y1="300" x2="60" y2="288" stroke={ink} stroke-width="2"></line>
+      <line x1="60" y1="278" x2="60" y2="24" stroke={ink} stroke-width="2" marker-end="url(#arrow)"></line>
       <line x1="60" y1="300" x2="416" y2="300" stroke={ink} stroke-width="2" marker-end="url(#arrow)"></line>
 
-      <!-- "non-zero origin" dashed break on the y-axis -->
-      <line x1="60" y1="288" x2="60" y2="278" stroke="#ffffff" stroke-width="4"></line>
+      <!-- non-zero-origin break marks (slashes sit in the axis gap) -->
       <line x1="56" y1="286" x2="64" y2="282" stroke={ink} stroke-width="1.5"></line>
       <line x1="56" y1="290" x2="64" y2="286" stroke={ink} stroke-width="1.5"></line>
 
