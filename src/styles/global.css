@@ -27,9 +27,10 @@
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 40px;
+  /* Low radii — crisp, institutional, not SaaS-bubbly. */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
 }
 
 :root {
@@ -172,8 +173,8 @@
 .pill {
   display: inline-flex;
   align-items: center;
-  /* Buttons are softly rounded — less round than the full-pill eyebrow tags. */
-  border-radius: 8px;
+  /* Buttons share the crisp card radius — institutional, not pill-shaped. */
+  border-radius: var(--radius-md);
   padding: 0.7rem 1.5rem;
   font-weight: 500;
   text-decoration: none;

@@ -24,7 +24,7 @@ const updates = (await getCollection("updates", ({ data }) => !data.draft)).sort
         ))}
       </ul>
     ) : (
-      <div class="mt-10 rounded-2xl border border-line bg-paper/55 p-8 text-center backdrop-blur-sm">
+      <div class="mt-10 rounded-md border border-line bg-paper/55 p-8 text-center backdrop-blur-sm">
         <p class="text-ink-soft">Community updates are forthcoming. Check back soon.</p>
       </div>
     )}
