@@ -1,6 +1,14 @@
 # AGENTS.md — MINA DT App Site
 
-Guide for any agent or contributor working in this repo. Read this first.
+Guide for any agent or contributor working in this repo. Read this first — then read the two
+sources of truth before making changes, and **keep them in sync** as you work:
+
+- **[`PRODUCT.md`](./PRODUCT.md)** — what this is, the information architecture, audience, voice.
+- **[`DESIGN.md`](./DESIGN.md)** — the design system (tokens, surfaces, components, do's/don'ts),
+  in the [design.md](https://github.com/google-labs-code/design.md) spec format.
+
+Any product/IA change → update `PRODUCT.md`. Any visual/token change → update `DESIGN.md`
+(and the matching `@theme` tokens in `src/styles/global.css`).
 
 ## What this is
 A community-facing site for the **MINA Decentralized Treasury (DT) App**. The **landing
@@ -9,9 +17,6 @@ App (concept, failure modes, proposal lifecycle, adaptive S-curve thresholds + a
 interactive calculator, deployment cadence, break-glass safeguards, validator concentration,
 next steps). `/updates` is a **forthcoming feed** of proposals/community updates as slug
 content — it may be sparse or empty; never make the primer depend on updates existing.
-
-- Product context & IA → **`PRODUCT.md`**
-- Design system (tokens, surfaces, voice) → **`DESIGN.md`** (in the design.md spec format)
 
 ## Stack
 - **Astro** (static output), **Tailwind CSS v4** (Vite plugin), **MDX** content collections.
