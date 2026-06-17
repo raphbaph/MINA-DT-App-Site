@@ -10,10 +10,10 @@ const grid = "#d9dfe4";
 const muted = "#6b7280";
 const line = "#5b7fe0";
 const rows = [
-  { label: "100000000", y: 92 },
-  { label: "10000000", y: 182 },
-  { label: "1000000", y: 272 },
-  { label: "100000", y: 362 },
+  { label: "100M", y: 92 },
+  { label: "10M", y: 182 },
+  { label: "1M", y: 272 },
+  { label: "100k", y: 362 },
 ];
 
 // Generate a smooth log-decline curve (power-law: balance ∝ rank^-k → on a log-y,
@@ -59,6 +59,8 @@ const curve = "M" + pts.join(" L");
         stroke-linecap="round"
         stroke-linejoin="round"
       ></path>
+
+      <text x="475" y="428" text-anchor="middle" font-size="13" fill={muted}>Account rank (high → low)</text>
     </svg>
   </div>
   {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
