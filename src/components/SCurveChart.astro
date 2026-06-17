@@ -4,14 +4,15 @@
 // removed" marker line. Brand-colored, crisp at any size, themeable.
 interface Props {
   caption?: string;
+  class?: string;
 }
-const { caption } = Astro.props;
+const { caption, class: cls = "my-7" } = Astro.props;
 const ink = "#2d2d2d";
 const violet = "#8576c5";
 ---
 
-<figure class="my-7">
-  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
+<figure class={cls}>
+  <div class="glass p-5 md:p-8">
     <svg
       viewBox="0 0 440 340"
       role="img"

@@ -1,5 +1,7 @@
 ---
-// Native SVG of the four-stage lifecycle (interlocking arrows), on-brand cool palette.
+// Four-stage lifecycle as a horizontal row of arrows (a left-to-right flow). It stays a
+// row at every size — filling the card on desktop, scrolling horizontally on mobile —
+// never stacking vertically.
 interface Props {
   caption?: string;
   class?: string;
@@ -12,32 +14,25 @@ const stages = ["Submission", "Exploration", "Voting", "Cooldown"];
 ---
 
 <figure class={cls}>
-  <div class="rounded-md border border-line bg-paper p-5 md:p-8">
-    <svg
-      viewBox="0 0 760 142"
-      role="img"
-      aria-label="Four-stage lifecycle: Submission, Exploration, Voting, Cooldown — each one epoch."
-      class="h-auto w-full"
-      font-family="IBM Plex Sans, system-ui, sans-serif"
-    >
+  <div class="glass p-5 md:p-8">
+    <div class="flex gap-3 overflow-x-auto sm:gap-4 sm:overflow-visible">
       {
-        stages.map((label, i) => {
-          const x = 6 + i * 192;
-          const cx = x + 68; // shared center for the label and its "1 Epoch" caption
-          return (
-            <g>
-              <path
-                d={`M${x},14 L${x + 128},14 L${x + 162},58 L${x + 128},102 L${x},102 Z`}
-                fill={fill}
-                stroke={stroke}
-              />
-              <text x={cx} y={64} text-anchor="middle" font-size="16" fill={ink}>{label}</text>
-              <text x={cx} y={132} text-anchor="middle" font-size="13" fill={ink}>1 Epoch</text>
-            </g>
-          );
-        })
+        stages.map((label) => (
+          <div class="w-[150px] shrink-0 sm:w-auto sm:flex-1">
+            <svg
+              viewBox="0 0 200 92"
+              role="img"
+              aria-label={`${label} — one epoch`}
+              class="w-full"
+              font-family="IBM Plex Sans, system-ui, sans-serif"
+            >
+              <path d="M2,10 L150,10 L196,46 L150,82 L2,82 Z" fill={fill} stroke={stroke} />
+              <text x="76" y="52" text-anchor="middle" font-size="18" fill={ink}>{label}</text>
+            </svg>
+          </div>
+        ))
       }
-    </svg>
+    </div>
   </div>
-  {caption && <figcaption class="mt-2 text-sm text-ink-soft">{caption}</figcaption>}
+  {caption && <figcaption class="mt-3 text-sm text-ink-soft">{caption}</figcaption>}
 </figure>
