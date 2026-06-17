@@ -1,6 +1,12 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import Section from "../components/Section.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import PillButton from "../components/PillButton.astro";
+import StatCard from "../components/StatCard.astro";
+import FeatureCard from "../components/FeatureCard.astro";
+import UpdateCard from "../components/UpdateCard.astro";
 import ThresholdCalculator from "../components/ThresholdCalculator.astro";
 import SCurveChart from "../components/SCurveChart.astro";
 import DeployFlowChart from "../components/DeployFlowChart.astro";
@@ -11,8 +17,7 @@ const updates = (await getCollection("updates", ({ data }) => !data.draft)).sort
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
 const proposalHref = "/updates/proposal-v1";
-const fmt = (d: Date) =>
-  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+const pad2 = (i: number) => String(i + 1).padStart(2, "0");
 
 const dossier = [
   { value: "~55M", note: "MINA total deployable across the three candidate phases" },
@@ -56,7 +61,7 @@ const criteria = [
 
 <BaseLayout title="MINA Foundation · Decentralized Treasury">
   {/* ---------- Hero ---------- */}
-  <section class="mx-auto max-w-[1180px] px-5 pt-14 pb-10 md:pt-20">
+  <Section class="pt-14 pb-10 md:pt-20">
     <span class="chip">MINA Decentralized Treasury</span>
     <h1 class="mt-4 max-w-[16ch] font-display text-4xl md:text-6xl">
       A treasury the community can gradually take over.
@@ -67,33 +72,26 @@ const criteria = [
       full community stewardship. This is a primer on how it works.
     </p>
     <div class="mt-8 flex flex-col gap-3 md:flex-row md:flex-wrap">
-      <a href="#calculator" class="pill pill-primary w-full justify-center md:w-auto">Try the threshold calculator</a>
-      <a href={proposalHref} class="pill pill-secondary w-full justify-center md:w-auto">Read the full proposal</a>
+      <PillButton href="#calculator" class="w-full justify-center md:w-auto">Try the threshold calculator</PillButton>
+      <PillButton href={proposalHref} variant="secondary" class="w-full justify-center md:w-auto">Read the full proposal</PillButton>
     </div>
 
     <dl class="mt-12 grid gap-4 sm:grid-cols-3">
-      {dossier.map((s) => (
-        <div class="glass p-7">
-          <dt class="font-body text-5xl font-semibold tracking-tight text-ink">{s.value}</dt>
-          <dd class="mt-3 max-w-[34ch] text-ink-soft">{s.note}</dd>
-        </div>
-      ))}
+      {dossier.map((s) => <StatCard value={s.value}>{s.note}</StatCard>)}
     </dl>
-  </section>
+  </Section>
 
   {/* ---------- Concept ---------- */}
-  <section id="concept" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Concept</span>
-    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
-      Community control, without risking the whole treasury on day one.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      MINA doesn't natively support delegated voting like an EVM governor. The DT App solves
-      that with a MINA-native ZKApp for the proposal lifecycle, adaptive quorum, vote
-      tallying, and treasury disbursement. The candidate approach starts small, gathers real
-      participation data, and redeploys with larger treasury slices and stronger thresholds
-      as community activity proves itself.
-    </p>
+  <Section id="concept">
+    <SectionHeading eyebrow="Concept" title="Community control, without risking the whole treasury on day one.">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        MINA doesn't natively support delegated voting like an EVM governor. The DT App solves
+        that with a MINA-native ZKApp for the proposal lifecycle, adaptive quorum, vote
+        tallying, and treasury disbursement. The candidate approach starts small, gathers real
+        participation data, and redeploys with larger treasury slices and stronger thresholds
+        as community activity proves itself.
+      </p>
+    </SectionHeading>
     <p class="mt-8 font-medium text-ink">Three failure modes shape every parameter:</p>
     <div class="mt-4 grid gap-4 md:grid-cols-3">
       {failureModes.map((m) => (
@@ -103,67 +101,52 @@ const criteria = [
         </div>
       ))}
     </div>
-  </section>
+  </Section>
 
   {/* ---------- Lifecycle ---------- */}
-  <section id="lifecycle" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Lifecycle</span>
-    <h2 class="mt-4 max-w-[18ch] font-display text-3xl md:text-5xl">
-      A four-week proposal lifecycle.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      The original report recommended variable lifecycle lengths. The DT App simplifies this:
-      submission, exploration, voting, and cooldown are each one MINA epoch — roughly one week
-      after the MESA update. These stages are fixed and can't change without redeploying.
-    </p>
+  <Section id="lifecycle">
+    <SectionHeading eyebrow="Lifecycle" title="A four-week proposal lifecycle." headingClass="max-w-[18ch] text-3xl md:text-5xl">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        The original report recommended variable lifecycle lengths. The DT App simplifies this:
+        submission, exploration, voting, and cooldown are each one MINA epoch — roughly one week
+        after the MESA update. These stages are fixed and can't change without redeploying.
+      </p>
+    </SectionHeading>
     <LifecycleChart caption="Four fixed stages, one epoch (~1 week) each." />
     <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {lifecycle.map((s, i) => (
-        <div class="rounded-2xl border border-line bg-paper/55 p-5 backdrop-blur-sm">
-          <span class="font-mono text-sm text-accent">{String(i + 1).padStart(2, "0")}</span>
-          <h3 class="mt-1 font-display text-lg">{s.t}</h3>
-          <p class="mt-2 text-sm text-ink-soft">{s.b}</p>
-        </div>
+        <FeatureCard marker={pad2(i)} title={s.t}>{s.b}</FeatureCard>
       ))}
     </div>
-  </section>
+  </Section>
 
   {/* ---------- Thresholds + calculator ---------- */}
-  <section id="thresholds" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Thresholds</span>
-    <h2 class="mt-4 max-w-[18ch] font-display text-3xl md:text-5xl">
-      Adaptive thresholds on an S-curve.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      Participation scales with the size of the request. Thresholds rise from 20% to 50%
-      participation and 51% to 70% approval, then a per-phase modifier scales those to the
-      current deployment. Early phases keep the bar low enough for real proposals to pass;
-      later phases raise the cost of capture.
-    </p>
+  <Section id="thresholds">
+    <SectionHeading eyebrow="Thresholds" title="Adaptive thresholds on an S-curve." headingClass="max-w-[18ch] text-3xl md:text-5xl">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        Participation scales with the size of the request. Thresholds rise from 20% to 50%
+        participation and 51% to 70% approval, then a per-phase modifier scales those to the
+        current deployment. Early phases keep the bar low enough for real proposals to pass;
+        later phases raise the cost of capture.
+      </p>
+    </SectionHeading>
     <div class="mt-8 grid items-start gap-6 lg:grid-cols-2">
       <SCurveChart class="m-0" caption="Required quorum rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
       <ThresholdCalculator />
     </div>
-  </section>
+  </Section>
 
   {/* ---------- Deployment ---------- */}
-  <section id="deployment" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Deployment</span>
-    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
-      Deployed in three guarded steps.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      Rather than expose the whole treasury at once, the DT App is deployed in rounds — moving
-      from guarded testing to final decentralization as the community proves itself.
-    </p>
+  <Section id="deployment">
+    <SectionHeading eyebrow="Deployment" title="Deployed in three guarded steps.">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        Rather than expose the whole treasury at once, the DT App is deployed in rounds — moving
+        from guarded testing to final decentralization as the community proves itself.
+      </p>
+    </SectionHeading>
     <div class="mt-6 grid gap-4 md:grid-cols-3">
       {phases.map((p, i) => (
-        <div class="rounded-2xl border border-line bg-paper/55 p-6 backdrop-blur-sm">
-          <span class="font-mono text-sm text-accent">{String(i + 1).padStart(2, "0")}</span>
-          <h3 class="mt-1 font-display text-xl">{p.t}</h3>
-          <p class="mt-1 font-mono text-sm text-ink-soft">{p.amt}</p>
-          <p class="mt-2 text-sm text-ink-soft">{p.b}</p>
-        </div>
+        <FeatureCard marker={pad2(i)} title={p.t} meta={p.amt} padding="p-6" titleSize="text-xl">{p.b}</FeatureCard>
       ))}
     </div>
     <div class="mt-6 grid items-stretch gap-6 lg:grid-cols-2">
@@ -181,27 +164,21 @@ const criteria = [
       The full deployment cadence table (participation/approval in % of supply and absolute
       MINA) is in the <a href={proposalHref} class="font-medium">full proposal</a>.
     </p>
-  </section>
+  </Section>
 
   {/* ---------- Safeguards ---------- */}
-  <section id="safeguards" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Safeguards</span>
-    <h2 class="mt-4 max-w-[16ch] font-display text-4xl md:text-6xl">
-      Break glass is a transitional security gate, not a second legislature.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      Five signers can veto, halt, or cancel proposals in emergencies when three submit a
-      signed proof to the ZKApp. The proposed initial composition is three MINA Foundation
-      signers, one o(1) Labs signer, and one Aragon X signer. It should act only when one of
-      these criteria is met:
-    </p>
+  <Section id="safeguards">
+    <SectionHeading eyebrow="Safeguards" title="Break glass is a transitional security gate, not a second legislature." headingClass="max-w-[16ch] text-4xl md:text-6xl">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        Five signers can veto, halt, or cancel proposals in emergencies when three submit a
+        signed proof to the ZKApp. The proposed initial composition is three MINA Foundation
+        signers, one o(1) Labs signer, and one Aragon X signer. It should act only when one of
+        these criteria is met:
+      </p>
+    </SectionHeading>
     <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
       {criteria.map((c) => (
-        <div class="rounded-2xl border border-line bg-paper/55 p-5 backdrop-blur-sm">
-          <span class="font-mono text-sm font-semibold text-accent">{c.n}</span>
-          <h3 class="mt-1 font-display text-lg">{c.t}</h3>
-          <p class="mt-2 text-sm text-ink-soft">{c.b}</p>
-        </div>
+        <FeatureCard marker={c.n} title={c.t} markerClass="font-semibold text-accent">{c.b}</FeatureCard>
       ))}
     </div>
     <div class="mt-4 grid gap-4 sm:grid-cols-2">
@@ -214,14 +191,11 @@ const criteria = [
         <p class="mt-2 text-sm text-ink-soft">The break glass is removed once community activity reaches sufficient quorum to safeguard funds — its keys sent to a burn address, leaving voter activity as the only safeguard.</p>
       </div>
     </div>
-  </section>
+  </Section>
 
   {/* ---------- Validators ---------- */}
-  <section id="validators" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Validators &amp; whales</span>
-    <h2 class="mt-4 max-w-[22ch] font-display text-3xl md:text-5xl">
-      Power is concentrated — so thresholds are set relative to it.
-    </h2>
+  <Section id="validators">
+    <SectionHeading eyebrow="Validators &amp; whales" title="Power is concentrated — so thresholds are set relative to it." headingClass="max-w-[22ch] text-3xl md:text-5xl" />
     <div class="mt-6 grid items-start gap-6 lg:grid-cols-[1fr_1.2fr]">
       <div>
         <p class="max-w-[58ch] text-lg text-ink-soft">
@@ -238,24 +212,22 @@ const criteria = [
       </div>
       <BalanceChart class="m-0" caption="Holdings decline more than logarithmically across the top 1000 accounts." />
     </div>
-  </section>
+  </Section>
 
   {/* ---------- Next steps ---------- */}
-  <section id="next" class="mx-auto max-w-[1180px] px-5 py-14">
-    <span class="chip">Next steps</span>
-    <h2 class="mt-4 max-w-[20ch] font-display text-3xl md:text-5xl">
-      A starting point for discussion.
-    </h2>
-    <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
-      This is a candidate proposal, open for community input — most importantly on break-glass
-      roles and escalation, when to remove the break glass, the deployment cadence, and the
-      voting thresholds.
-    </p>
-    <a href={proposalHref} class="pill pill-primary mt-6">Read the full proposal</a>
-  </section>
+  <Section id="next">
+    <SectionHeading eyebrow="Next steps" title="A starting point for discussion.">
+      <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
+        This is a candidate proposal, open for community input — most importantly on break-glass
+        roles and escalation, when to remove the break glass, the deployment cadence, and the
+        voting thresholds.
+      </p>
+    </SectionHeading>
+    <PillButton href={proposalHref} class="mt-6">Read the full proposal</PillButton>
+  </Section>
 
   {/* ---------- Updates (forthcoming) ---------- */}
-  <section class="mx-auto max-w-[1180px] px-5 py-14">
+  <Section>
     <div class="mb-6 flex items-baseline justify-between">
       <div>
         <span class="chip">Updates</span>
@@ -266,13 +238,7 @@ const criteria = [
     {updates.length > 0 ? (
       <ul class="space-y-4">
         {updates.slice(0, 3).map((entry) => (
-          <li>
-            <a href={`/updates/${entry.data.slug ?? entry.id}`} class="card-dark block p-6 no-underline">
-              <p class="meta font-mono text-sm">{fmt(entry.data.pubDate)}</p>
-              <h3 class="mt-1 font-display text-xl">{entry.data.title}</h3>
-              <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
-            </a>
-          </li>
+          <li><UpdateCard entry={entry} /></li>
         ))}
       </ul>
     ) : (
@@ -280,5 +246,5 @@ const criteria = [
         <p class="text-ink-soft">Community updates are forthcoming. Check back soon.</p>
       </div>
     )}
-  </section>
+  </Section>
 </BaseLayout>

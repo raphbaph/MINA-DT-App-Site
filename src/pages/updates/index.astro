@@ -1,13 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import UpdateCard from "../../components/UpdateCard.astro";
 
 const updates = (await getCollection("updates", ({ data }) => !data.draft)).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime(),
 );
-
-const fmt = (d: Date) =>
-  d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 ---
 
 <BaseLayout title="Updates · MINA DT App">
@@ -22,16 +20,7 @@ const fmt = (d: Date) =>
     {updates.length > 0 ? (
       <ul class="mt-10 space-y-4">
         {updates.map((entry) => (
-          <li>
-            <a
-              href={`/updates/${entry.data.slug ?? entry.id}`}
-              class="card-dark block p-6 no-underline"
-            >
-              <p class="meta font-mono text-sm">{fmt(entry.data.pubDate)}</p>
-              <h2 class="mt-1 font-display text-2xl">{entry.data.title}</h2>
-              <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
-            </a>
-          </li>
+          <li><UpdateCard entry={entry} heading="h2" /></li>
         ))}
       </ul>
     ) : (

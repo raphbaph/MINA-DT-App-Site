@@ -1,0 +1,27 @@
+---
+// Light bordered card with a mono marker, serif title, optional meta line, and body (slot).
+// Used for the lifecycle stages, deployment phases, and break-glass criteria.
+interface Props {
+  marker: string;
+  title: string;
+  meta?: string;
+  padding?: string;
+  titleSize?: string;
+  markerClass?: string;
+}
+const {
+  marker,
+  title,
+  meta,
+  padding = "p-5",
+  titleSize = "text-lg",
+  markerClass = "text-accent",
+} = Astro.props;
+---
+
+<div class={`rounded-2xl border border-line bg-paper/55 backdrop-blur-sm ${padding}`}>
+  <span class={`font-mono text-sm ${markerClass}`}>{marker}</span>
+  <h3 class={`mt-1 font-display ${titleSize}`}>{title}</h3>
+  {meta && <p class="mt-1 font-mono text-sm text-ink-soft">{meta}</p>}
+  <p class="mt-2 text-sm text-ink-soft"><slot /></p>
+</div>

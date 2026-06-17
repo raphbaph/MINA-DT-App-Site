@@ -1,0 +1,25 @@
+---
+// Dark update/proposal card linking to /updates/<slug>. Used on the landing's "latest
+// updates" list (h3) and the /updates index (h2).
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"updates">;
+  heading?: "h2" | "h3";
+}
+const { entry, heading = "h3" } = Astro.props;
+const Heading = heading;
+const titleSize = heading === "h2" ? "text-2xl" : "text-xl";
+const date = entry.data.pubDate.toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+});
+const href = `/updates/${entry.data.slug ?? entry.id}`;
+---
+
+<a href={href} class="card-dark block p-6 no-underline">
+  <p class="meta font-mono text-sm">{date}</p>
+  <Heading class={`mt-1 font-display ${titleSize}`}>{entry.data.title}</Heading>
+  <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
+</a>

@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import PillButton from "./PillButton.astro";
 import logo from "../assets/mina-logo.png";
 const sections = [
   { href: "/#concept", label: "Concept" },
@@ -40,7 +41,7 @@ const sections = [
           ))
         }
       </ul>
-      <a href="/updates" class="pill pill-primary !px-5 !py-2.5 text-sm">Updates</a>
+      <PillButton href="/updates" class="!px-5 !py-2.5 text-sm">Updates</PillButton>
     </nav>
   </header>
 </div>

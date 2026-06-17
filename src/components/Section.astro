@@ -1,0 +1,12 @@
+---
+// Page section wrapper: centered max-width column with consistent horizontal padding.
+interface Props {
+  id?: string;
+  class?: string;
+}
+const { id, class: cls = "py-14" } = Astro.props;
+---
+
+<section id={id} class={`mx-auto max-w-[1180px] px-5 ${cls}`}>
+  <slot />
+</section>

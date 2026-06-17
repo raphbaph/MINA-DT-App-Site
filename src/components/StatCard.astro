@@ -1,0 +1,12 @@
+---
+// Hero "dossier" stat: big bold sans number with a description below, on a glass card.
+interface Props {
+  value: string;
+}
+const { value } = Astro.props;
+---
+
+<div class="glass p-7">
+  <dt class="font-body text-5xl font-semibold tracking-tight text-ink">{value}</dt>
+  <dd class="mt-3 max-w-[34ch] text-ink-soft"><slot /></dd>
+</div>
