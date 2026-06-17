@@ -4,7 +4,7 @@
 A community-facing site for the **MINA Decentralized Treasury (DT) App**. Its purpose is
 to publish clear, credible **community updates / releases** about the DT App and its
 governance proposal — starting with the inaugural proposal that surfaces discussion points
-for deploying a DAO Treasury ZK App so the community can gradually take control of the
+for deploying a DAO Treasury zkApp so the community can gradually take control of the
 decentralized treasury.
 
 ## Audience

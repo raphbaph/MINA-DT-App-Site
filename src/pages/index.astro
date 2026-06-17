@@ -27,7 +27,7 @@ const dossier = [
 const failureModes = [
   { t: "Bricked by caution", b: "Thresholds set too high and no proposal can ever pass — the treasury is frozen by its own rules." },
   { t: "Open to capture", b: "Thresholds too low let a cheap voting majority pass self-serving proposals and drain the treasury." },
-  { t: "Out of sync", b: "The ZKApp falls out of sync with chain state and its proofs no longer reconcile, bricking the treasury." },
+  { t: "Out of sync", b: "The zkApp falls out of sync with chain state and its proofs no longer reconcile, bricking the treasury." },
 ];
 
 const lifecycle = [
@@ -66,7 +66,7 @@ const criteria = [
       Safely putting the community in charge of its treasury.
     </h1>
     <p class="mt-5 max-w-[60ch] text-lg text-ink-soft">
-      The DT App is a MINA-native ZKApp for submitting, voting on, and executing treasury
+      The DT App is a MINA-native zkApp for submitting, voting on, and executing treasury
       proposals — ramping from a guarded test phase to full community control. Here's how
       it works.
     </p>
@@ -85,7 +85,7 @@ const criteria = [
     <SectionHeading eyebrow="Concept" title="Community control, without risking the whole treasury on day one.">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         MINA doesn't natively support delegated voting like an EVM governor. The DT App solves
-        that with a MINA-native ZKApp for the proposal lifecycle, adaptive quorum, vote
+        that with a MINA-native zkApp for the proposal lifecycle, adaptive quorum, vote
         tallying, and treasury disbursement. The candidate approach starts small, gathers real
         participation data, and redeploys with larger treasury slices and stronger thresholds
         as community activity proves itself.
@@ -170,7 +170,7 @@ const criteria = [
     <SectionHeading eyebrow="Safeguards" title="Break glass is a transitional security gate, not a second legislature." headingClass="max-w-[16ch] text-4xl md:text-6xl">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         Five signers can veto, halt, or cancel proposals in emergencies when three submit a
-        signed proof to the ZKApp. The proposed initial composition is three MINA Foundation
+        signed proof to the zkApp. The proposed initial composition is three MINA Foundation
         signers, one o(1) Labs signer, and one Aragon X signer. It should act only when one of
         these criteria is met:
       </p>

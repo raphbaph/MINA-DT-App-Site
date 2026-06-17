@@ -1,6 +1,6 @@
 ---
 title: "MINA Decentralized Treasury App: Candidate Proposal"
-summary: "Discussion points for deploying a DAO Treasury ZK app that lets the MINA community gradually take control of the decentralized treasury: proposal lifecycle, adaptive S-curve quorum, a phased deployment cadence, and break-glass safeguards."
+summary: "Discussion points for deploying a DAO Treasury zkApp that lets the MINA community gradually take control of the decentralized treasury: proposal lifecycle, adaptive S-curve quorum, a phased deployment cadence, and break-glass safeguards."
 pubDate: 2026-05-28
 version: "v1 · discussion draft"
 slug: "proposal-v1"
@@ -15,7 +15,7 @@ import stages from '../../assets/proposal-stages.png';
 
 ## One-sentence summary
 
-This proposal surfaces discussion points for the upcoming deployment of a DAO Treasury ZK App that allows the community to gradually take control of the Decentralized Treasury.
+This proposal surfaces discussion points for the upcoming deployment of a DAO Treasury zkApp that allows the community to gradually take control of the Decentralized Treasury.
 
 ## Introduction
 
@@ -27,13 +27,13 @@ The parameters will be governed by results from the [MINA Foundation Governance 
 
 ## Technical Challenges
 
-MINA Protocol doesn't natively support delegated voting in a similar fashion as EVM (Ethereum Virtual Machine) chains. This means setting up an EVM-style **Governor** requires the development and deployment of a MINA-native ZKApp which controls the treasury (or parts thereof) and supports proposal lifecycles and voting similar to DAOs in EVM chains, Solana or Near.
+MINA Protocol doesn't natively support delegated voting in a similar fashion as EVM (Ethereum Virtual Machine) chains. This means setting up an EVM-style **Governor** requires the development and deployment of a MINA-native zkApp which controls the treasury (or parts thereof) and supports proposal lifecycles and voting similar to DAOs in EVM chains, Solana or Near.
 
-The MINA Foundation has funded and overseen the development of such an application, which is currently undergoing audits and rigorous testing on diverse data sets. The ZKApp would support a pre-defined **proposal lifecycle**, pre-defined **adaptive quorum requirements** and can finally execute treasury disbursements for successful proposals.
+The MINA Foundation has funded and overseen the development of such an application, which is currently undergoing audits and rigorous testing on diverse data sets. The zkApp would support a pre-defined **proposal lifecycle**, pre-defined **adaptive quorum requirements** and can finally execute treasury disbursements for successful proposals.
 
-Finally the ZKApp has a **break glass** multisig functionality where a supermajority of three out of five signers can halt or cancel proposals in case of emergency. More on this later.
+Finally the zkApp has a **break glass** multisig functionality where a supermajority of three out of five signers can halt or cancel proposals in case of emergency. More on this later.
 
-This ZKApp — which we will call **DT App** for now (DT = Decentralized Treasury) — needs to be redeployed for parameter changes. This is important to keep in mind for how the Decentralized Treasury will be deployed. **TL;DR:** it can not be one app with increasing slices of the treasury available inside the initial deployment, but a succession of deployments with larger parts of the treasury committed, in tandem with higher quorum and participation requirements for proposals.
+This zkApp — which we will call **DT App** for now (DT = Decentralized Treasury) — needs to be redeployed for parameter changes. This is important to keep in mind for how the Decentralized Treasury will be deployed. **TL;DR:** it can not be one app with increasing slices of the treasury available inside the initial deployment, but a succession of deployments with larger parts of the treasury committed, in tandem with higher quorum and participation requirements for proposals.
 
 The final deployment would hold the rest of the treasury at that point, with matching quorum and participation requirements. Pending proven success to distribute, protect against treasury-draining threats, and signal long-term stability, the break glass multisig would be deprecated by sending the signer keys to a burn address. The break glass functionality — which could be seen as a form of gatekeeping — would finally be removed, giving unfettered and unrestrictable access to the treasury to the **community**.
 
@@ -43,7 +43,7 @@ To do this safely, three failure modes have to be avoided:
 
 1. Quorum and participation requirements are so high that no proposal passes, bricking the treasury.
 2. Quorum and participation requirements are too low, allowing for governance attacks.
-3. The ZKApp deployment runs out of sync with the chain, with proofs no longer reconcilable with chain state, bricking the treasury.
+3. The zkApp deployment runs out of sync with the chain, with proofs no longer reconcilable with chain state, bricking the treasury.
 
 Failure modes 1 and 2 are parameter issues. Failure mode 3 is a dev-ops and software-security issue. This proposal focuses on 1 and 2, with 3 currently being robustly tested for with diverse chain-state data sets — main-chain state, devnet chain state, and hand-built chain-state configurations — to ensure robustness.
 
@@ -51,7 +51,7 @@ Multiple deployments help to avoid all three failure modes. This proposal argues
 
 ## Break Glass Composition
 
-The Break Glass has the ability to veto, halt and cancel proposals in extreme cases. The break glass consists of five (5) signers, three (3) of which have to agree and submit a signed proof to the ZKApp so that a veto on a proposal is enacted. This 60% supermajority is in line with point 5.2 of the Aragon report.
+The Break Glass has the ability to veto, halt and cancel proposals in extreme cases. The break glass consists of five (5) signers, three (3) of which have to agree and submit a signed proof to the zkApp so that a veto on a proposal is enacted. This 60% supermajority is in line with point 5.2 of the Aragon report.
 
 The initial five signers will be:
 
@@ -210,9 +210,9 @@ Example values:
 
 ## Treasury Distribution Cadence
 
-As outlined in the chapter on failure modes, it is imperative to deploy the treasury in multiple rounds of ZKApps to avoid putting all the eggs in one proverbial basket. The amount of MINA voting on a proposal should be higher than the amount a proposal can distribute *at the point where the break glass is removed*. It can be lower before that, because the break glass can stop malicious proposals at any stage before that, constituting a last line of defense.
+As outlined in the chapter on failure modes, it is imperative to deploy the treasury in multiple rounds of zkApps to avoid putting all the eggs in one proverbial basket. The amount of MINA voting on a proposal should be higher than the amount a proposal can distribute *at the point where the break glass is removed*. It can be lower before that, because the break glass can stop malicious proposals at any stage before that, constituting a last line of defense.
 
-The ZKApp has been tested rigorously and audited on multiple data sets, including the full live mainnet. Nevertheless "reality is an undefeated champion", so we propose to start the initial deployment with a relatively small amount deployed and low participation requirements. The total deployable treasury size is **~55M $MINA or ~2.8M USD** at today's prices — a sizable treasury that can fund and bootstrap exciting developments, in line with the initial vision for the DT App by maht0rz.
+The zkApp has been tested rigorously and audited on multiple data sets, including the full live mainnet. Nevertheless "reality is an undefeated champion", so we propose to start the initial deployment with a relatively small amount deployed and low participation requirements. The total deployable treasury size is **~55M $MINA or ~2.8M USD** at today's prices — a sizable treasury that can fund and bootstrap exciting developments, in line with the initial vision for the DT App by maht0rz.
 
 We suggest a small initial deployment, a growth phase, and a final decentralization step:
 
@@ -291,7 +291,7 @@ The DT App needs to be hosted on a capable server, needs an archive node, plus e
 - Hosting of the DT App frontend, including necessary security updates.
 - Frontend and UX improvements where necessary.
 - Hosting and DevOps for an archival node.
-- Hosting and DevOps for the workers that keep the ZKApp in sync with chain state.
+- Hosting and DevOps for the workers that keep the zkApp in sync with chain state.
 
 DevOps is going to take around 40 hrs per month of system-admin resources. Hosting can be done on an affordable VPS, but the workers need a minimum of 16 vCPU and 64 GB of RAM — so even if they're only used 3–4 days a month, this might cost around $70–100 per server per month.
 
