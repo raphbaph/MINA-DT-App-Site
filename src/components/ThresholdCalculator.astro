@@ -1,17 +1,31 @@
 ---
 // Interactive island. The calculation logic is ported verbatim from the original
-// js/calculator.js — constants and formulas unchanged.
+// js/calculator.js — constants and formulas unchanged. The plot is driven by the same
+// math on ONE shared axis (honest heights): approval (charcoal) and participation (violet,
+// % of supply) required vs. the proposal ask. A marker tracks the slider, and the
+// participation curve re-scales when the phase modifier changes.
+const ink = "#2d2d2d";
+const violet = "#8576c5";
+const muted = "#6b7280";
+// Plot mapping (kept identical in the client script below).
+const X0 = 52, X1 = 410, Y0 = 250, Y1 = 24, YMAX = 80;
+const px = (a: number) => X0 + (a / 100) * (X1 - X0);
+const py = (v: number) => Y0 - (v / YMAX) * (Y0 - Y1);
+const yTicks = [0, 20, 40, 60, 80];
+const xTicks = [0, 25, 50, 75, 100];
 ---
 
 <div id="calculator" class="glass scroll-mt-28 p-6 md:p-9">
-    <h2 class="font-display text-2xl md:text-3xl">Adaptive threshold calculator</h2>
-    <p class="mt-2 max-w-[60ch] text-ink-soft">
-      Pick a deployment phase and a proposal ask (as a share of that phase's
-      treasury) to see the required participation and approval, and the MINA
-      figures behind them.
-    </p>
+  <h2 class="font-display text-2xl md:text-3xl">Adaptive threshold calculator</h2>
+  <p class="mt-2 max-w-[60ch] text-ink-soft">
+    Pick a deployment phase and a proposal ask (as a share of that phase's
+    treasury) to see the required participation and approval, and the MINA
+    figures behind them.
+  </p>
 
-    <div class="mt-6 space-y-5">
+  <div class="mt-6 grid gap-6 lg:grid-cols-2 lg:gap-8">
+    <!-- Controls + outputs -->
+    <div class="space-y-5">
       <div>
         <label for="phase" class="mb-1 block font-medium">Deployment phase</label>
         <select
@@ -36,22 +50,67 @@
           class="mt-3 w-full accent-[var(--color-accent)]"
         />
       </div>
+
+      <div class="grid gap-6 sm:grid-cols-2" aria-live="polite">
+        <div class="border-l-2 border-accent pl-4">
+          <p class="text-sm text-ink-soft">Participation required</p>
+          <p id="participationOut" class="font-display text-3xl text-ink">—</p>
+          <p id="participationMina" class="mt-1 font-mono text-sm text-ink-soft"></p>
+        </div>
+        <div class="border-l-2 border-accent pl-4">
+          <p class="text-sm text-ink-soft">Approval required</p>
+          <p id="approvalOut" class="font-display text-3xl text-ink">—</p>
+          <p id="approvalMina" class="mt-1 font-mono text-sm text-ink-soft"></p>
+        </div>
+      </div>
+
+      <p id="askOut" class="font-mono text-sm text-ink" aria-live="polite"></p>
     </div>
 
-    <div class="mt-7 grid gap-6 sm:grid-cols-2" aria-live="polite">
-      <div class="border-l-2 border-accent pl-4">
-        <p class="text-sm text-ink-soft">Participation required</p>
-        <p id="participationOut" class="font-display text-3xl text-ink">—</p>
-        <p id="participationMina" class="mt-1 font-mono text-sm text-ink-soft"></p>
-      </div>
-      <div class="border-l-2 border-accent pl-4">
-        <p class="text-sm text-ink-soft">Approval required</p>
-        <p id="approvalOut" class="font-display text-3xl text-ink">—</p>
-        <p id="approvalMina" class="mt-1 font-mono text-sm text-ink-soft"></p>
+    <!-- Live S-curve (single shared axis — honest heights) -->
+    <div class="rounded-xl border border-line bg-paper/40 p-3 md:p-4">
+      <svg
+        viewBox="0 0 452 300"
+        role="img"
+        aria-label="Required approval (charcoal) and participation as a share of supply (violet) rising with the proposal ask, on one shared percentage axis. A marker tracks the selected ask."
+        class="h-auto w-full"
+        font-family="IBM Plex Sans, system-ui, sans-serif"
+      >
+        {yTicks.map((v) => (
+          <g>
+            <line x1={X0} y1={py(v)} x2={X1} y2={py(v)} stroke="#e7ebee" stroke-width="1"></line>
+            <text x={X0 - 8} y={py(v) + 4} text-anchor="end" font-size="11" fill={muted}>{v}</text>
+          </g>
+        ))}
+        {xTicks.map((a) => (
+          <text x={px(a)} y={Y0 + 18} text-anchor="middle" font-size="11" fill={muted}>{a}</text>
+        ))}
+
+        <!-- Axes -->
+        <line x1={X0} y1={Y0} x2={X1} y2={Y0} stroke={ink} stroke-width="1.5"></line>
+        <line x1={X0} y1={Y0} x2={X0} y2={Y1} stroke={ink} stroke-width="1.5"></line>
+
+        <!-- Ask marker (x set by script) -->
+        <line id="marker" x1={X0} y1={Y1} x2={X0} y2={Y0} stroke={violet} stroke-width="1" stroke-dasharray="4 3" opacity="0.55"></line>
+
+        <!-- Curves (d set by script) -->
+        <path id="apprCurve" d="" fill="none" stroke={ink} stroke-width="2.5" stroke-linecap="round"></path>
+        <path id="partCurve" d="" fill="none" stroke={violet} stroke-width="2.5" stroke-linecap="round"></path>
+
+        <!-- Markers at the current ask (set by script) -->
+        <circle id="apprDot" cx={X0} cy={Y0} r="4.5" fill={ink}></circle>
+        <circle id="partDot" cx={X0} cy={Y0} r="4.5" fill={violet}></circle>
+
+        <!-- Axis titles -->
+        <text transform={`rotate(-90 16 ${(Y0 + Y1) / 2})`} x="16" y={(Y0 + Y1) / 2} text-anchor="middle" font-size="12" fill={ink}>Required %</text>
+        <text x={(X0 + X1) / 2} y={Y0 + 38} text-anchor="middle" font-size="12" fill={ink}>Proposal ask (% of phase treasury)</text>
+      </svg>
+      <div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft">
+        <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#2d2d2d"></span>Approval (%)</span>
+        <span class="inline-flex items-center gap-1.5"><span class="h-2 w-2 rounded-full" style="background:#8576c5"></span>Participation (% of supply)</span>
       </div>
     </div>
-
-    <p id="askOut" class="mt-5 font-mono text-sm text-ink" aria-live="polite"></p>
+  </div>
 </div>
 
 <script>
@@ -71,8 +130,37 @@
   const approvalMina = document.querySelector("#approvalMina") as HTMLElement;
   const askOut = document.querySelector("#askOut") as HTMLElement;
 
+  // Chart elements + plot mapping (mirrors the frontmatter constants).
+  const partCurve = document.querySelector("#partCurve") as unknown as SVGPathElement;
+  const apprCurve = document.querySelector("#apprCurve") as unknown as SVGPathElement;
+  const marker = document.querySelector("#marker") as unknown as SVGLineElement;
+  const partDot = document.querySelector("#partDot") as unknown as SVGCircleElement;
+  const apprDot = document.querySelector("#apprDot") as unknown as SVGCircleElement;
+  const X0 = 52, X1 = 410, Y0 = 250, Y1 = 24, YMAX = 80;
+  const px = (a: number) => X0 + (a / 100) * (X1 - X0);
+  const py = (v: number) => Y0 - (Math.min(v, YMAX) / YMAX) * (Y0 - Y1);
+
   function curve(x: number, c: number) {
     return x / (x + c * (1 - x));
+  }
+
+  // Threshold functions, identical to the figures shown in the outputs.
+  function participationPct(askPercent: number, modifier: number) {
+    const x = Math.min(askPercent / 100, 1);
+    const bp = 2000 + (5000 - 2000) * curve(x, 0.05);
+    return (modifier * bp) / 100;
+  }
+  function approvalPct(askPercent: number) {
+    const x = Math.min(askPercent / 100, 1);
+    const bp = 5100 + (7000 - 5100) * curve(x, 0.1);
+    return bp / 100;
+  }
+  function pathFor(fn: (a: number) => number) {
+    let d = "";
+    for (let a = 0; a <= 100; a += 2) {
+      d += (a === 0 ? "M" : "L") + px(a).toFixed(1) + "," + py(fn(a)).toFixed(1) + " ";
+    }
+    return d.trim();
   }
 
   function formatK(value: number) {
@@ -98,6 +186,17 @@
     approvalMina.textContent = formatK(approvalK) + " minimum yay at participation floor";
     askOut.textContent =
       "Estimated ask: " + formatK(askK) + " from the selected treasury.";
+
+    // Redraw curves (participation re-scales with the phase modifier) and move the marker.
+    apprCurve.setAttribute("d", pathFor(approvalPct));
+    partCurve.setAttribute("d", pathFor((a) => participationPct(a, selected.modifier)));
+    const mx = px(askPercent);
+    marker.setAttribute("x1", String(mx));
+    marker.setAttribute("x2", String(mx));
+    apprDot.setAttribute("cx", String(mx));
+    apprDot.setAttribute("cy", String(py(approvalRatioPct)));
+    partDot.setAttribute("cx", String(mx));
+    partDot.setAttribute("cy", String(py(participationSupplyPct)));
   }
 
   ask.addEventListener("input", updateCalculator);

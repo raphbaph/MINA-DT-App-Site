@@ -8,7 +8,6 @@ import StatCard from "../components/StatCard.astro";
 import FeatureCard from "../components/FeatureCard.astro";
 import UpdateCard from "../components/UpdateCard.astro";
 import ThresholdCalculator from "../components/ThresholdCalculator.astro";
-import SCurveChart from "../components/SCurveChart.astro";
 import DeployFlowChart from "../components/DeployFlowChart.astro";
 import LifecycleChart from "../components/LifecycleChart.astro";
 import BalanceChart from "../components/BalanceChart.astro";
@@ -20,8 +19,8 @@ const proposalHref = "/updates/proposal-v1";
 const pad2 = (i: number) => String(i + 1).padStart(2, "0");
 
 const dossier = [
-  { value: "~55M", note: "MINA total deployable across the three candidate phases" },
-  { value: "4", note: "epoch proposal lifecycle (~4 weeks) after pre-discussion" },
+  { value: "~55M", note: "MINA total deployable across all candidate phases" },
+  { value: "3", note: "phased deployment — from a 1M MINA test to 35M+ MINA at full scale" },
   { value: "3 / 5", note: "signer break-glass threshold for an emergency veto" },
 ];
 
@@ -130,15 +129,14 @@ const criteria = [
         later phases raise the cost of capture.
       </p>
     </SectionHeading>
-    <div class="mt-8 grid items-start gap-6 lg:grid-cols-2">
-      <SCurveChart class="m-0" caption="Required quorum (the participation/approval bar) rises ahead of treasury size on an S-curve; the break glass is removed once quorum can stand on its own." />
+    <div class="mt-8">
       <ThresholdCalculator />
     </div>
   </Section>
 
   {/* ---------- Deployment ---------- */}
   <Section id="deployment">
-    <SectionHeading eyebrow="Deployment" title="From sandbox to full control, in three steps." headingClass="max-w-[20ch] text-3xl md:text-5xl">
+    <SectionHeading eyebrow="Deployment" title="From sandbox to full control, in three phases." headingClass="max-w-[20ch] text-3xl md:text-5xl">
       <p class="mt-5 max-w-[62ch] text-lg text-ink-soft">
         Rather than expose the whole treasury at once, the DT App is deployed in phases — each
         phase an era of many proposal rounds — moving from guarded testing to final
