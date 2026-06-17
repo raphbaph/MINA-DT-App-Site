@@ -11,24 +11,24 @@ const sections = [
 ---
 
 <div class="sticky top-3 z-40 px-3 md:top-4 md:px-5">
-  <header class="glass-header mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-4 backdrop-blur-[40px] backdrop-saturate-150 md:px-7">
-    <a href="/" class="flex items-center gap-3 no-underline">
+  <header class="glass-header mx-auto flex max-w-[1180px] items-center justify-between gap-3 px-4 py-3 backdrop-blur-[40px] backdrop-saturate-150 md:gap-4 md:px-7 md:py-4">
+    <a href="/" class="flex min-w-0 items-center gap-2.5 no-underline md:gap-3">
       <Image
         src={logo}
         alt="MINA Decentralized Treasury"
         width={96}
         height={96}
-        class="h-11 w-11 rounded-xl"
+        class="h-9 w-9 shrink-0 rounded-lg md:h-11 md:w-11 md:rounded-xl"
       />
-      <span class="leading-tight">
+      <span class="min-w-0 leading-tight">
         <span class="eyebrow block">MINA Foundation</span>
-        <span class="block font-display text-lg text-ink md:text-xl">
-          Decentralized&nbsp;Treasury Updates
+        <span class="block truncate font-display text-base text-ink md:text-xl">
+          Decentralized&nbsp;Treasury
         </span>
       </span>
     </a>
 
-    <nav aria-label="Primary" class="flex items-center gap-5">
+    <nav aria-label="Primary" class="flex shrink-0 items-center gap-5">
       <ul class="hidden items-center gap-6 text-sm font-medium lg:flex">
         {
           sections.map((s) => (

@@ -188,9 +188,9 @@ decorative blobs — blooms + glass + rounding do the work.
 - **Do** use Feijoa Display for headings, IBM Plex Sans for prose, IBM Plex Mono for numbers.
 - **Don't** use pure white as the page background, or saturated violet for large soft fills.
 - **Don't** make glass flat/matte — it should be glossy and vibrant.
-- **Don't** two-tone text within a single line/phrase (e.g. coloring one word lighter, like
-  the wordmark's "Updates"). Color hierarchy comes from **role** — heading vs body, `ink` vs
-  `ink-soft` on *separate* elements — never from splitting one line into two colors.
+- **Don't** two-tone text within a single line/phrase (e.g. coloring one word in the wordmark
+  lighter). Color hierarchy comes from **role** — heading vs body, `ink` vs `ink-soft` on
+  *separate* elements — never from splitting one line into two colors.
 - **Don't** center long-form body text or exceed ~62ch measure (data tables exempt).
 - **Don't** ship AI-design "slop" tells — `/impeccable audit` (rendered + file modes) must be
   clean or carry a documented ignore.

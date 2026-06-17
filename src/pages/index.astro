@@ -54,7 +54,7 @@ const criteria = [
 ];
 ---
 
-<BaseLayout title="MINA Foundation · Decentralized Treasury Updates">
+<BaseLayout title="MINA Foundation · Decentralized Treasury">
   {/* ---------- Hero ---------- */}
   <section class="mx-auto max-w-[1180px] px-5 pt-14 pb-10 md:pt-20">
     <span class="chip">MINA Decentralized Treasury</span>
@@ -66,9 +66,9 @@ const criteria = [
       execute treasury proposals while the system ramps from a guarded test deployment to
       full community stewardship. This is a primer on how it works.
     </p>
-    <div class="mt-8 flex flex-wrap gap-3">
-      <a href="#calculator" class="pill pill-primary">Try the threshold calculator</a>
-      <a href={proposalHref} class="pill pill-secondary">Read the full proposal</a>
+    <div class="mt-8 flex flex-col gap-3 md:flex-row md:flex-wrap">
+      <a href="#calculator" class="pill pill-primary w-full justify-center md:w-auto">Try the threshold calculator</a>
+      <a href={proposalHref} class="pill pill-secondary w-full justify-center md:w-auto">Read the full proposal</a>
     </div>
 
     <dl class="mt-12 grid gap-4 sm:grid-cols-3">
@@ -268,9 +268,7 @@ const criteria = [
         {updates.slice(0, 3).map((entry) => (
           <li>
             <a href={`/updates/${entry.data.slug ?? entry.id}`} class="card-dark block p-6 no-underline">
-              <p class="meta font-mono text-sm">
-                {fmt(entry.data.pubDate)}{entry.data.version ? ` · ${entry.data.version}` : ""}
-              </p>
+              <p class="meta font-mono text-sm">{fmt(entry.data.pubDate)}</p>
               <h3 class="mt-1 font-display text-xl">{entry.data.title}</h3>
               <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
             </a>
