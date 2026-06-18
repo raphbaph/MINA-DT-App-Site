@@ -13,7 +13,7 @@ colors:                  # sampled from MINA Foundation site + user art directio
   lavenderInk: "#B7C0EE"  # readable lavender link/label on dark surfaces
   accentInk: "#FFFFFF"
   ok: "#00CA92"           # MINA teal — calculator "pass" state, "default stance" dot
-  warn: "#FFC22D"         # MINA amber — eyebrow chips, threshold warnings
+  cta: "#FFC22D"          # MINA amber — the eye-catching primary-CTA color (no warn UI)
 bloom:                    # large, soft, lightly-grainy gradient blooms on the base
   violet: "rgb(133 118 197 / 0.50)"
   blue: "rgb(150 174 222 / 0.42)"
@@ -67,14 +67,15 @@ elevation:
   glass: "0 14px 44px rgb(45 45 45 / 0.12), inset 0 1px 0 rgb(255 255 255 / 0.85)"
   cardDark: "0 16px 44px rgb(20 24 28 / 0.22)"
 components:
-  button:                               # primary CTA — FLAT periwinkle, ink text
-    backgroundColor: "#9A94E8"          # blue-violet, the complement to the amber chips
+  button:                               # primary CTA — FLAT full amber, ink text
+    backgroundColor: "{colors.cta}"     # eye-catching amber; hover = smokey amber (no shadow)
     textColor: "{colors.ink}"
     rounded: "{rounded.md}"              # crisp 6px — shares the card radius, NOT a pill
     padding: "{spacing.sm} {spacing.lg}"
     note: "flat color — no gloss, no emboss, no shadow"
-  chip:                                 # section eyebrow tag — orangey-yellow rectangle
-    backgroundColor: "{colors.warn}"
+  chip:                                 # section eyebrow tag — purple outline + washed-lavender fill
+    backgroundColor: "color-mix(in oklab, {colors.accentBrand} 20%, white)"  # washed-lavender pastel
+    border: "{colors.accentBrand}"      # purple (1px) outline
     textColor: "{colors.ink}"
     typography: "{typography.eyebrow}"
     rounded: "3px"                       # just a smidge of radius
@@ -82,6 +83,7 @@ components:
   glassHeader:                          # FLOATING, glossy, chunky nav (inset from all edges)
     backgroundColor: "rgb(255 255 255 / 0.7)"
     rounded: "{rounded.md}"
+    border: "gradient — dark grey (top) → white (bottom), via padding-box/border-box"
   glass:                                # glossy, vibrant fogged glass (calculator, stat cards)
     backgroundColor: "rgb(244 247 249 / 0.45)"
     rounded: "{rounded.md}"
@@ -90,8 +92,9 @@ components:
     textColor: "rgb(205 217 225 / 0.88)"
     rounded: "{rounded.md}"
     padding: "{spacing.xl}"
-  eyebrowChip:                          # e.g. amber "SAFEGUARDS"
-    backgroundColor: "{colors.warn}"
+  ctaButton:                            # nav "soft" amber button (Updates) — washed + outline
+    backgroundColor: "color-mix(in oklab, {colors.cta} 22%, white)"
+    border: "{colors.cta}"
     textColor: "{colors.ink}"
     rounded: "{rounded.sm}"
   table:
@@ -121,7 +124,7 @@ passes WCAG AA as text and as a button fill); `{colors.accentBrand}` (the lighte
 brand violet) is decorative/large-only. The **secondary** `{colors.accentSoft}` is an
 ultra-light lavender, almost blue — for soft fills, tints, chips, and the glass sheen;
 `{colors.lavenderInk}` is its readable form for links/labels on dark surfaces. `{colors.ok}`
-(teal) / `{colors.warn}` (amber) are status + accent-chip colors. All text meets ≥ 4.5:1.
+(teal) is a status accent; `{colors.cta}` (amber) is the eye-catching primary-CTA color. All text meets ≥ 4.5:1.
 
 The background blooms (`{bloom.violet}`, `{bloom.blue}`, `{bloom.greenTeal}`) are large and
 soft, anchored to corners, with a film-grain overlay (`{bloom.grainOpacity}`, soft-light)
@@ -136,8 +139,12 @@ Plex is open (OFL); only Feijoa needs a license. Big serif section headlines pai
 small mono eyebrow are the primer's signature rhythm.
 
 ## Layout
-Spacing follows `{spacing.*}` (4 → 96px). Content caps ~1180px; prose ~62ch. The landing is
-a single-column **educational primer**: each section = mono eyebrow (or amber chip) + a
+Spacing follows `{spacing.*}` (4 → 96px). Content caps ~1180px; prose ~62ch. Section content
+lines up with the **floating nav's content padding** (where the logo/links sit, not the glass
+bar's outer edge): `Section` mirrors the nav — outer float gutter + an inner 1180px column with
+the same inner padding as the nav bar — so body content shares the nav's left/right gutter. The
+landing is
+a single-column **educational primer**: each section = mono eyebrow (or lavender chip) + a
 large serif headline + supporting body, then its artifacts (cards, figure, table, or the
 calculator). Data tables scroll horizontally on mobile.
 
@@ -150,19 +157,24 @@ use `{elevation.cardDark}`. Borders + cool fills carry the rest.
 ## Shapes
 Low, crisp radii for **institutional gravitas — not SaaS-friendly bubbliness**:
 `{rounded.md}` (6px) for cards, glass, nav, dark cards, buttons, calculator, and tables;
-`{rounded.sm}` (4px) for inputs/code/focus; **3px** (a smidge) for the amber section chips.
+`{rounded.sm}` (4px) for inputs/code/focus; **3px** (a smidge) for the lavender section chips.
 `{rounded.full}` is reserved for genuinely circular elements only (slider thumb, social
 icons, status dots) — never for cards or buttons. No decorative blobs; depth comes from the
 blooms, glossy glass, and dark cards, not from rounding.
 
 ## Components
-- **Button:** `components.button` — **flat periwinkle (blue-violet) fill with ink text**, a
-  crisp 6px radius (not a pill), no gloss/emboss/shadow; chosen as the complement to the amber
-  chips. Visible focus ring. Secondary = translucent white button with a line border.
-- **Section eyebrow chip:** `components.chip` — every section opens with the **orangey-yellow
-  (amber) tag** (uppercase mono, near-square with a 3px smidge of radius), then the serif headline.
+- **Button:** `components.button` — **flat full-amber fill with ink text** (`{colors.cta}`), a
+  crisp 6px radius (not a pill), no gloss/emboss; amber is the eye-catching CTA color. Hover =
+  smokey (charcoal-tinted) amber, no shadow. Variants: **secondary** = translucent white + line
+  border; **soft** = washed-amber fill + amber border (the nav "Updates"), same smokey hover.
+- **Section eyebrow chip:** `components.chip` — every section opens with the **lavender tag**:
+  a purple 1px outline with a washed-lavender pastel fill, ink uppercase mono, 3px smidge of
+  radius — then the serif headline. (Exception: the hero leads with the large headline, no chip.)
 - **Floating glass header:** `components.glassHeader` — a glossy, chunky glass bar that
-  floats inset from all edges (not touching the sides), heavy blur + saturation, rounded.
+  floats inset from all edges (not touching the sides), heavy blur + saturation, rounded, with
+  a **gradient hairline border** (dark grey at the top fading to white at the bottom). Section
+  links use a **scrollspy** — the in-view section's link gets a violet underline; "Updates" is a
+  `soft` amber button. (Body content aligns to the nav's content gutter — see Layout.)
 - **Stat cards:** big bold **sans** numbers (IBM Plex Sans) with the description below — not
   serif, no fussy inline unit.
 - **Glass (glossy):** `components.glass` — the calculator shell and stat/dossier cards;
@@ -170,7 +182,7 @@ blooms, glossy glass, and dark cards, not from rounding.
 - **Dark feature card:** `components.cardDark` — concept/failure-mode/safeguard/update cards
   and the "phase transition rules" panel; white serif heading, light cool-gray body, lavender
   links.
-- **Eyebrow:** every section kicker is the amber `components.chip` (uppercase mono); the plain
+- **Eyebrow:** every section kicker is the lavender `components.chip` (uppercase mono); the plain
   mono `.eyebrow` (no fill) is reserved for the header brand label ("MINA Foundation").
 - **Numbered cards:** 01–05 markers (mono, accent-colored) over serif titles — used for the
   break-glass criteria. A deliberate editorial device here, not slop.

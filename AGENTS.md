@@ -59,7 +59,8 @@ DESIGN.md  PRODUCT.md       # design + product source of truth
 - Type: **Feijoa Display** (serif headings) + **IBM Plex Sans** (body) + **IBM Plex Mono**
   (numbers/eyebrows). Accent violet `#574AA0` (AA-safe); secondary is an ultra-light
   lavender-almost-blue `#E3E6F6`.
-- Section rhythm: mono eyebrow (or amber chip) + large serif headline + body + artifact.
+- Section rhythm: mono eyebrow (or lavender chip) + large serif headline + body + artifact.
+  Amber is reserved for the primary CTA (buttons); lavender carries the section chips.
 - Keep `global.css` `@theme` tokens in sync with `DESIGN.md`.
 
 ## Adding an update
