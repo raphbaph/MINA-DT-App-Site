@@ -18,8 +18,11 @@ const date = entry.data.pubDate.toLocaleDateString("en-US", {
 const href = `/updates/${entry.data.slug ?? entry.id}`;
 ---
 
-<a href={href} class="card-dark block p-6 no-underline">
-  <p class="meta font-mono text-sm">{date}</p>
-  <Heading class={`mt-1 font-display ${titleSize}`}>{entry.data.title}</Heading>
-  <p class="mt-2 max-w-[68ch] text-sm">{entry.data.summary}</p>
+<a href={href} class="card-dark block p-6 no-underline md:flex md:items-center md:justify-between md:gap-10">
+  <div class="min-w-0 md:flex-1">
+    <p class="meta font-mono text-sm">{date}</p>
+    <Heading class={`mt-1 font-display ${titleSize}`}>{entry.data.title}</Heading>
+    <p class="mt-2 text-sm">{entry.data.summary}</p>
+  </div>
+  <span class="mt-4 shrink-0 font-mono text-sm text-lavender-ink md:mt-0">Read →</span>
 </a>

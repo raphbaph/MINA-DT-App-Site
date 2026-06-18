@@ -21,7 +21,7 @@
   --color-lavender-ink: #b7c0ee;
   --color-accent-ink: #ffffff;
   --color-ok: #00ca92;
-  --color-warn: #ffc22d;
+  --color-cta: #ffc22d; /* MINA amber — the eye-catching primary-CTA color */
 
   --font-display: "Feijoa Display", Georgia, "Times New Roman", serif;
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
@@ -124,8 +124,10 @@
 /* Section eyebrow tag — orangey-yellow pill (the brand kicker for every section). */
 .chip {
   display: inline-block;
-  border-radius: 3px; /* just a smidge of radius on the amber tag */
-  background: var(--color-warn);
+  border-radius: 3px; /* just a smidge of radius on the tag */
+  /* Purple outline + washed-lavender pastel fill. */
+  background: color-mix(in oklab, var(--color-accent-brand) 20%, white);
+  border: 1px solid var(--color-accent-brand);
   color: var(--color-ink);
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -159,14 +161,31 @@
 
 /* Floating, glossy, chunky glass nav bar (inset from all edges). */
 .glass-header {
-  /* Translucent enough to SEE content behind; the heavy blur (applied via Tailwind
-     backdrop utilities in the markup, which compile unprefixed correctly) reads as fog. */
+  /* Original glossy glass FILL — left untouched. Translucent so the heavy blur (applied via
+     Tailwind backdrop utilities in the markup) reads as fog. */
+  position: relative;
   background: linear-gradient(165deg, rgb(255 255 255 / 0.55), rgb(232 238 238 / 0.42));
-  border: 1px solid rgb(255 255 255 / 0.65);
+  border: 1px solid transparent;
   border-radius: var(--radius-md);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.9),
     0 12px 40px rgb(45 45 45 / 0.12);
+}
+/* Gradient hairline BORDER (dark grey top → white bottom) drawn as a masked ring so it only
+   paints the 1px edge — not the fill. (The border-box trick bleeds through translucent glass
+   and tints the whole bar; this doesn't.) */
+.glass-header::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(to bottom, rgb(64 64 64 / 0.55), rgb(255 255 255 / 0.95));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* Pill buttons — primary is light lavender (the secondary color) with ink text. */
@@ -180,12 +199,19 @@
   text-decoration: none;
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-/* Flat periwinkle (blue-violet) — the complement to the amber chips. No gloss/emboss. */
+/* Flat full-amber — the bold CTA (complement to the purple/lavender chips). No gloss/emboss. */
 .pill-primary {
-  background: #9a94e8;
+  background: var(--color-cta);
   color: var(--color-ink);
 }
-.pill-primary:hover { background: #8b84e0; color: var(--color-ink); }
+/* Hover (both amber buttons): a smokey (charcoal-tinted) amber fill — no shadow/pop. The
+   soft button's border goes smokey too, so fill + border match into one solid button. */
+.pill-primary:hover,
+.pill-soft:hover {
+  background: color-mix(in oklab, var(--color-cta), var(--color-ink) 16%);
+  border-color: color-mix(in oklab, var(--color-cta), var(--color-ink) 16%);
+  color: var(--color-ink);
+}
 .pill-secondary {
   background: rgb(255 255 255 / 0.55);
   color: var(--color-ink);
@@ -194,6 +220,22 @@
   -webkit-backdrop-filter: blur(8px);
 }
 .pill-secondary:hover { border-color: var(--color-accent); color: var(--color-ink); }
+/* Soft amber — washed fill + amber outline (lighter than the full-amber CTA). Nav "Updates". */
+.pill-soft {
+  --soft-fill: color-mix(in oklab, var(--color-cta) 22%, white);
+  background: var(--soft-fill);
+  border: 1px solid var(--color-cta);
+  color: var(--color-ink);
+}
+
+/* Scrollspy: the in-view section's nav link gets a violet underline (no layout shift). */
+.nav-active {
+  color: var(--color-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+  text-decoration-color: var(--color-accent);
+}
 
 /* Custom select — replace the inconsistent native chevron with a clean brand one. */
 .select {

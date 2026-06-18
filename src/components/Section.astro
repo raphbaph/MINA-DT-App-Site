@@ -1,5 +1,8 @@
 ---
-// Page section wrapper: centered max-width column with consistent horizontal padding.
+// Page section wrapper. Mirrors the floating nav's structure so body content lines up with
+// the nav's CONTENT padding (where the logo/links sit), not the glass bar's outer edge:
+// outer float gutter (px-3/md:px-5, matching Header's wrapper) + an inner max-width column
+// with the same inner padding as the nav bar (px-4/md:px-7). `class` sets vertical rhythm.
 interface Props {
   id?: string;
   class?: string;
@@ -7,6 +10,8 @@ interface Props {
 const { id, class: cls = "py-14" } = Astro.props;
 ---
 
-<section id={id} class={`mx-auto max-w-[1180px] px-5 ${cls}`}>
-  <slot />
+<section id={id} class={`px-3 md:px-5 ${cls}`}>
+  <div class="mx-auto max-w-[1180px] px-4 md:px-7">
+    <slot />
+  </div>
 </section>

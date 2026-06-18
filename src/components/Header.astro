@@ -34,14 +34,42 @@ const sections = [
         {
           sections.map((s) => (
             <li>
-              <a href={s.href} class="text-ink-soft no-underline hover:text-accent">
+              <a
+                href={s.href}
+                data-section={s.href.replace("/#", "")}
+                class="text-ink-soft no-underline hover:text-accent"
+              >
                 {s.label}
               </a>
             </li>
           ))
         }
       </ul>
-      <PillButton href="/updates" class="!px-5 !py-2.5 text-sm">Updates</PillButton>
+      <PillButton href="/updates" variant="soft" class="!px-5 !py-2.5 text-sm">Updates</PillButton>
     </nav>
   </header>
 </div>
+
+<script>
+  // Scrollspy: underline the nav link of whichever section is currently in view.
+  const navLinks = Array.from(document.querySelectorAll<HTMLElement>("[data-section]"));
+  const byId = new Map(navLinks.map((l) => [l.dataset.section, l]));
+  const sections = [...byId.keys()]
+    .map((id) => (id ? document.getElementById(id) : null))
+    .filter((el): el is HTMLElement => !!el);
+
+  if (sections.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            navLinks.forEach((l) => l.classList.remove("nav-active"));
+            byId.get(entry.target.id)?.classList.add("nav-active");
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -55% 0px" },
+    );
+    sections.forEach((s) => observer.observe(s));
+  }
+</script>
